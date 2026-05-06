@@ -70,11 +70,8 @@ Bảng quản lý thời gian theo khung giờ:
 ### 4. 📊 PROGRESS TRACKER
 
 Theo dõi tiến độ các mục tiêu với checkbox:
-
-- ✅ Hoàn thành mục tiêu Chuyên Phan
 - ✅ Hoàn thiện Knowledge Tree HTML
 - ✅ Tích hợp Time Boxing
-
 ---
 
 ## 💾 Lưu trữ dữ liệu

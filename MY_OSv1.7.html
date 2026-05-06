@@ -1,2080 +1,1531 @@
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧠 GM_H_NHAN OS · Root/Child/Canopy/Leaf</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Courier New', Courier, 'SF Mono', monospace;
-    }
-
-    body {
-      background: #0b1210;
-      color: #d2efe3;
-      padding: 2rem 2rem 1rem;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .os-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
-      flex: 1;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      border-bottom: 2px solid #2a6b53;
-      padding-bottom: 1.2rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: #b1f0da;
-      text-shadow: 0 0 12px #1a4d3b;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .mantra {
-      font-style: italic;
-      color: #7bb9a3;
-      border-left: 4px solid #3f8f72;
-      padding-left: 1.2rem;
-      margin-top: 6px;
-      font-size: 1rem;
-    }
-
-    .sys-badge {
-      background: #13231e;
-      padding: 0.5rem 1.5rem;
-      border-radius: 40px;
-      border: 1px solid #3b8869;
-      font-weight: bold;
-      font-size: 0.9rem;
-      display: flex;
-      gap: 16px;
-      color: #bef0df;
-    }
-
-    .tabs-nav {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid #255f49;
-      padding-bottom: 2px;
-    }
-
-    .tab-btn {
-      background: transparent;
-      border: none;
-      color: #88bba9;
-      font-size: 1.2rem;
-      font-weight: bold;
-      padding: 10px 28px;
-      cursor: pointer;
-      border-radius: 30px 30px 0 0;
-      transition: all 0.15s;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      border: 1px solid transparent;
-      border-bottom: none;
-    }
-
-    .tab-btn:hover {
-      color: #d4f5e8;
-      background: #152f26;
-    }
-
-    .tab-btn.active {
-      color: #e3ffee;
-      background: #12261f;
-      border-color: #2e7a5e #2e7a5e #12261f;
-      border-style: solid;
-      border-width: 1px;
-      box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .tab-panel {
-      display: none;
-      background: #0e1c17;
-      border: 1px solid #286349;
-      border-radius: 24px;
-      padding: 2rem 1.8rem;
-      box-shadow: 0 12px 0 #07100c;
-      margin-bottom: 2rem;
-    }
-
-    .tab-panel.active {
-      display: block;
-    }
-
-    .panel-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1.8rem;
-    }
-
-    .panel-header h2 {
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: #bff0dd;
-      letter-spacing: 1px;
-      border-left: 6px solid #53b38b;
-      padding-left: 20px;
-    }
-
-    .panel-header span {
-      margin-left: auto;
-      background: #1b3d31;
-      padding: 4px 16px;
-      border-radius: 30px;
-      font-size: 0.8rem;
-      color: #a9ddcb;
-      border: 1px solid #468066;
-    }
-
-    /* ---------- TREE STYLES (Phân cấp rõ ràng) ---------- */
-    .tree-root-container {
-      padding-left: 0;
-    }
-
-    .tree-node {
-      margin: 8px 0;
-      list-style: none;
-    }
-
-    .node-children {
-      margin-left: 32px;
-      border-left: 2px dashed #2e6b53;
-      padding-left: 12px;
-    }
-
-    .node-item {
-      margin: 12px 0;
-    }
-
-    .node-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      padding: 4px 0;
-    }
-
-    .level-badge {
-      font-size: 0.7rem;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: #1c3a2f;
-      color: #b3ddce;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      border: 1px solid #3e7862;
-      min-width: 70px;
-      text-align: center;
-    }
-
-    .level-0 .level-badge {
-      background: #1a4a3a;
-      color: #d0f5e7;
-      border-color: #6ab896;
-    }
-
-    .level-1 .level-badge {
-      background: #1d4e5c;
-      color: #c4eaff;
-    }
-
-    .level-2 .level-badge {
-      background: #4e5a28;
-      color: #f3f0b2;
-    }
-
-    .level-3 .level-badge {
-      background: #4a2e5e;
-      color: #e1bfff;
-    }
-
-    .node-icon {
-      font-size: 1.3rem;
-      margin-right: 4px;
-    }
-
-    .node-name-input {
-      background: transparent;
-      border: none;
-      border-bottom: 2px dashed #3a8366;
-      color: #dcf5ea;
-      font-size: 1.15rem;
-      font-weight: bold;
-      padding: 4px 8px 4px 0;
-      min-width: 200px;
-      outline: none;
-    }
-
-    .node-name-input:focus {
-      border-bottom-color: #7ce0b5;
-    }
-
-    .leaf-list {
-      margin-left: 36px;
-      margin-top: 6px;
-    }
-
-    .leaf-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 6px 0;
-    }
-
-    .leaf-item::before {
-      content: "▹";
-      color: #5fc09a;
-      font-size: 1.3rem;
-    }
-
-    .leaf-input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid #367a5e;
-      color: #e2f3e9;
-      font-size: 1rem;
-      padding: 4px 6px 4px 0;
-      width: 100%;
-      outline: none;
-    }
-
-    .leaf-input:focus {
-      border-bottom-color: #8ae0bc;
-    }
-
-    .node-actions {
-      display: flex;
-      gap: 6px;
-      margin-left: 12px;
-    }
-
-    .small-btn {
-      background: none;
-      border: 1px dashed #438b6d;
-      color: #9acfbb;
-      border-radius: 20px;
-      padding: 2px 10px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: 0.15s;
-    }
-
-    .small-btn:hover {
-      background: #1b4235;
-      border: 1px solid #6fc2a0;
-      color: #f0fff8;
-    }
-
-    .delete-icon {
-      color: #cf8686;
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 0 4px;
-      opacity: 0.7;
-    }
-
-    .delete-icon:hover {
-      opacity: 1;
-      color: #ffa6a6;
-    }
-
-    .global-add-btn {
-      background: none;
-      border: 1px dashed #438b6d;
-      color: #9acfbb;
-      border-radius: 30px;
-      padding: 8px 20px;
-      margin-top: 20px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    /* ---------- MATRIX & TIMEBOX (giữ nguyên) ---------- */
-    .matrix-quadrants {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-
-    .quadrant-card {
-      background: #10231d;
-      border-radius: 20px;
-      padding: 16px 18px;
-      border: 1px solid #2e6d55;
-    }
-
-    .quadrant-title {
-      font-size: 1.2rem;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .badge-q1 {
-      background: #632e2e;
-      color: #ffb5b5;
-      padding: 4px 14px;
-      border-radius: 20px;
-    }
-
-    .badge-q2 {
-      background: #1e5a6e;
-      color: #b0e4ff;
-    }
-
-    .badge-q3 {
-      background: #5e5826;
-      color: #f9f0a0;
-    }
-
-    .badge-q4 {
-      background: #3e4a44;
-      color: #d4d4d4;
-    }
-
-    .task-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .task-table td {
-      padding: 8px 4px;
-      border-bottom: 1px solid #28634b;
-    }
-
-    .task-input-matrix {
-      width: 100%;
-      background: transparent;
-      border: none;
-      border-bottom: 1px dotted #438667;
-      color: #e0f1e8;
-      font-size: 0.95rem;
-      padding: 6px 4px;
-      outline: none;
-    }
-
-    .task-input-matrix:focus {
-      border-bottom-color: #82dcb4;
-    }
-
-    .add-task-sm {
-      background: none;
-      border: 1px dashed #4e8e72;
-      color: #aad9c5;
-      border-radius: 30px;
-      padding: 6px 14px;
-      margin-top: 12px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    .timebox-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .timebox-table th {
-      text-align: left;
-      padding: 10px 8px 8px;
-      color: #9ed1bd;
-      border-bottom: 2px solid #276349;
-    }
-
-    .timebox-table td {
-      padding: 8px 8px;
-      border-bottom: 1px solid #1f4f3c;
-    }
-
-    .time-input-field {
-      background: transparent;
-      border: none;
-      border-bottom: 1px dotted #3e8869;
-      color: #eaf9f2;
-      width: 110px;
-      padding: 6px 4px;
-      outline: none;
-    }
-
-    .desc-input-field {
-      background: transparent;
-      border: none;
-      border-bottom: 1px dotted #3e8869;
-      color: #eaf9f2;
-      width: 100%;
-      padding: 6px 4px;
-      outline: none;
-    }
-
-    .tag-input-field {
-      background: transparent;
-      border: none;
-      border-bottom: 1px dotted #3e8869;
-      color: #c2e3d6;
-      width: 90px;
-      padding: 6px 4px;
-    }
-
-    .footer {
-      display: flex;
-      gap: 24px;
-      margin-top: 10px;
-    }
-
-    .rules-box,
-    .progress-box {
-      background: #0e1f18;
-      border: 1px solid #266349;
-      border-radius: 20px;
-      padding: 1.2rem 1.8rem;
-      flex: 1;
-    }
-
-    .progress-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 12px 0;
-    }
-
-    .progress-check {
-      font-size: 1.8rem;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .btn {
-      background: #1f4d3c;
-      border: 1px solid #469a7a;
-      color: white;
-      padding: 8px 18px;
-      border-radius: 40px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-right: 12px;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px dashed #60a589;
-    }
-
-    /* ========== CLOCK FOCUS STYLES ========== */
-    .clock-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .clock-display {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      margin-bottom: 24px;
-    }
-
-    .clock-circle {
-      width: 100%;
-      height: 100%;
-      transform: rotate(-90deg);
-    }
-
-    .clock-bg {
-      fill: none;
-      stroke: #1a3d30;
-      stroke-width: 8;
-    }
-
-    .clock-progress {
-      fill: none;
-      stroke: #4ec99e;
-      stroke-width: 8;
-      stroke-linecap: round;
-      stroke-dasharray: 565.48;
-      stroke-dashoffset: 0;
-      transition: stroke-dashoffset 1s linear;
-    }
-
-    .clock-time {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 2.8rem;
-      font-weight: bold;
-      color: #d2efe3;
-      text-shadow: 0 0 10px #2a6b53;
-    }
-
-    .clock-mode-selector {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .clock-mode-btn {
-      background: #132a22;
-      border: 1px solid #3a7a5e;
-      color: #9acfbb;
-      padding: 8px 14px;
-      border-radius: 24px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .clock-mode-btn:hover {
-      background: #1a3d30;
-    }
-
-    .clock-mode-btn.active {
-      background: #1f4d3c;
-      border-color: #6fc2a0;
-      color: #e3ffee;
-    }
-
-    .clock-custom-input {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .clock-custom-input input {
-      background: #0b1410;
-      border: 1px solid #2a5a44;
-      color: #d2efe3;
-      padding: 8px 12px;
-      border-radius: 8px;
-      width: 70px;
-      text-align: center;
-      font-size: 1rem;
-    }
-
-    .clock-custom-input input:focus {
-      border-color: #4ec99e;
-      outline: none;
-    }
-
-    .clock-laps {
-      background: #0b1410;
-      border: 1px solid #2a5a44;
-      border-radius: 12px;
-      padding: 12px;
-      width: 100%;
-      max-width: 300px;
-      margin-bottom: 16px;
-      max-height: 150px;
-      overflow-y: auto;
-    }
-
-    .laps-header {
-      color: #b1f0da;
-      font-size: 0.9rem;
-      margin-bottom: 8px;
-      border-bottom: 1px solid #2a5a44;
-      padding-bottom: 4px;
-    }
-
-    .lap-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 8px;
-      color: #9acfbb;
-      font-size: 0.85rem;
-    }
-
-    .lap-item:nth-child(odd) {
-      background: #142620;
-    }
-
-    .clock-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 20px;
-    }
-
-    .clock-actions .action-btn {
-      background: #1f4d3c;
-      border: 1px solid #469a7a;
-      color: #fff;
-      padding: 8px 18px;
-      border-radius: 30px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.15s;
-      min-width: 80px;
-    }
-
-    .clock-actions .action-btn:hover {
-      background: #2a6b53;
-      border-color: #6fc2a0;
-      color: #e3ffee;
-    }
-
-    .clock-actions .action-btn.start {
-      background: #2a6b53;
-      border-color: #5ec2a0;
-    }
-
-    .clock-actions .action-btn.pause {
-      background: #5a2a2a;
-      border-color: #a65a5a;
-    }
-
-    .clock-actions .action-btn.pause:hover {
-      background: #7a3a3a;
-    }
-
-    .clock-actions .action-btn.reset {
-      background: #1a3d30;
-      border-color: #3a7a5e;
-    }
-
-    .clock-actions .action-btn.lap {
-      background: #3a5a3a;
-      border-color: #5a8a5a;
-      display: none;
-    }
-
-    .clock-actions .action-btn.lap:hover {
-      background: #4a6a4a;
-    }
-
-    /* ========== NOTEBOOK STYLES ========== */
-    .notebook-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .notebook-tab {
-      background: transparent;
-      border: 1px solid #3a6b52;
-      color: #8cbbad;
-      padding: 8px 20px;
-      border-radius: 30px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .notebook-tab:hover {
-      background: #152a22;
-    }
-
-    .notebook-tab.active {
-      background: #1f4d3c;
-      border-color: #5ec2a0;
-      color: #e3ffee;
-    }
-
-    .notebook-content {
-      display: none;
-      background: #0e1c17;
-      border: 1px solid #2a6b53;
-      border-radius: 16px;
-      padding: 20px;
-      min-height: 300px;
-    }
-
-    .notebook-content.active {
-      display: block;
-    }
-
-    .text-editor textarea {
-      width: 100%;
-      height: 260px;
-      background: #0b1410;
-      border: 1px solid #2a5a44;
-      border-radius: 12px;
-      color: #d2efe3;
-      font-size: 1rem;
-      padding: 16px;
-      resize: none;
-      outline: none;
-      font-family: 'Courier New', Courier, monospace;
-    }
-
-    .text-editor textarea:focus {
-      border-color: #4ec99e;
-    }
-
-    .archiver-area {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .archiver-input-area {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .archiver-input {
-      background: #0b1410;
-      border: 1px solid #2a5a44;
-      border-radius: 12px;
-      color: #d2efe3;
-      padding: 10px 14px;
-      font-size: 0.95rem;
-      outline: none;
-    }
-
-    .archiver-input:focus {
-      border-color: #4ec99e;
-    }
-
-    .archiver-textarea {
-      background: #0b1410;
-      border: 1px solid #2a5a44;
-      border-radius: 12px;
-      color: #d2efe3;
-      padding: 10px 14px;
-      font-size: 0.9rem;
-      outline: none;
-      min-height: 80px;
-      resize: vertical;
-      font-family: 'Courier New', Courier, monospace;
-    }
-
-    .archiver-textarea:focus {
-      border-color: #4ec99e;
-    }
-
-    .archiver-tags-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .archiver-tag-input {
-      background: #0b1410;
-      border: 1px solid #2a5a44;
-      border-radius: 20px;
-      color: #d2efe3;
-      padding: 6px 12px;
-      font-size: 0.85rem;
-      width: 150px;
-      outline: none;
-    }
-
-    .archiver-tag-input:focus {
-      border-color: #4ec99e;
-    }
-
-    .archiver-tag {
-      background: #1f4d3c;
-      border: 1px solid #469a7a;
-      color: #e3ffee;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-
-    .archiver-tag:hover {
-      background: #2a6b53;
-    }
-
-    .archiver-add-btn {
-      background: #1f4d3c;
-      border: 1px solid #469a7a;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 40px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .archiver-add-btn:hover {
-      background: #2a6b53;
-    }
-
-    .archiver-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 380px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .archiver-item {
-      background: #0f1d16;
-      border: 1px solid #2a5a44;
-      border-radius: 14px;
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transition: all 0.15s;
-    }
-
-    .archiver-item:hover {
-      border-color: #3a7a5e;
-    }
-
-    .archiver-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .archiver-item-title {
-      font-weight: bold;
-      color: #bff0dd;
-      font-size: 1rem;
-    }
-
-    .archiver-item-date {
-      font-size: 0.75rem;
-      color: #7bb9a3;
-    }
-
-    .archiver-item-desc {
-      color: #c8e3d9;
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    .archiver-item-tags {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .archiver-item-tag {
-      background: #1a3d30;
-      border: 1px solid #3a7a5e;
-      color: #b1f0da;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-    }
-
-    .archiver-item-actions {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-    }
-
-    .archiver-del-btn,
-    .archiver-edit-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 0.85rem;
-      padding: 2px 8px;
-    }
-
-    .archiver-del-btn {
-      color: #cf8686;
-    }
-
-    .archiver-del-btn:hover {
-      color: #ffa6a6;
-    }
-
-    .archiver-edit-btn {
-      color: #9acfbb;
-    }
-
-    .archiver-edit-btn:hover {
-      color: #d2efe3;
-    }
-
-    .archiver-empty {
-      color: #639f88;
-      text-align: center;
-      padding: 40px;
-      font-style: italic;
-    }
-
-    .archiver-filter-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .archiver-filter {
-      background: #0b1410;
-      border: 1px solid #2a5a44;
-      border-radius: 20px;
-      color: #9acfbb;
-      padding: 6px 14px;
-      font-size: 0.85rem;
-      outline: none;
-    }
-
-    .archiver-filter:focus {
-      border-color: #4ec99e;
-    }
-
-    .archiver-sort-select {
-      background: #0b1410;
-      border: 1px solid #2a5a44;
-      border-radius: 20px;
-      color: #9acfbb;
-      padding: 6px 14px;
-      font-size: 0.85rem;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .text-editor-bar {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    .small-action-btn {
-      background: #1f4d3c;
-      border: 1px solid #469a7a;
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 0.85rem;
-      cursor: pointer;
-    }
-
-    .small-action-btn:hover {
-      background: #2a6b53;
-    }
-
-    .mini-status {
-      color: #4ec99e;
-      font-size: 0.8rem;
-      margin-left: 6px;
-    }
-
-    .file-crud-bar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .file-crud-btn {
-      background: #1a3d30;
-      border: 1px solid #3a7a5e;
-      color: #b1f0da;
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 0.85rem;
-      cursor: pointer;
-    }
-
-    .file-crud-btn:hover {
-      background: #2a6b53;
-      color: #e3ffee;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="os-container">
-    <div class="header">
-      <div>
-        <h1>🧠 GM_H_NHAN // OS</h1>
-      </div>
-      <div class="sys-badge">
-        <span id="liveClock">--:--:--</span>
-        <span>🔒 2FA ON</span>
-        <span>🐉 VIBE 20'</span>
-      </div>
-    </div>
-
-    <div class="tabs-nav">
-      <button class="tab-btn active" data-tab="tree">🌳 KNOWLEDGE TREE</button>
-      <button class="tab-btn" data-tab="matrix">♟️ EISENHOWER MATRIX</button>
-      <button class="tab-btn" data-tab="timebox">📦 TIME BOXING</button>
-      <button class="tab-btn" data-tab="clock">⏰ CLOCK FOCUS</button>
-      <button class="tab-btn" data-tab="notebook">📓 NOTEBOOK LM</button>
-    </div>
-
-    <!-- Tree Panel -->
-    <div id="panel-tree" class="tab-panel active">
-      <div class="panel-header">
-        <h2>🌳 KNOWLEDGE TREE · Phân cấp</h2>
-        <span>GỐC → CON → TÁN → LÁ</span>
-      </div>
-      <div id="treeContainer" class="tree-root-container"></div>
-      <button class="global-add-btn" id="addRootBranchBtn">➕ Thêm Nhánh Gốc (Root)</button>
-      <p style="color:#639f88; margin-top:16px;">
-        ▹ Nhánh gốc (level 0) → Nhánh con (level 1) → Nhánh tán (level 2) → Nhánh lá (level 3+) · Sửa tên trực tiếp.
-      </p>
-    </div>
-
-    <!-- Matrix Panel -->
-    <div id="panel-matrix" class="tab-panel">
-      <div class="panel-header">
-        <h2>♟️ EISENHOWER MATRIX</h2>
-        <span>EXCEL-STYLE</span>
-      </div>
-      <div id="matrixGrid" class="matrix-quadrants"></div>
-    </div>
-
-    <!-- Timebox Panel -->
-    <div id="panel-timebox" class="tab-panel">
-      <div class="panel-header">
-        <h2>📦 TIME BOXING</h2>
-        <span>EDITABLE SLOTS</span>
-      </div>
-      <table class="timebox-table">
-        <thead>
-          <tr>
-            <th>Thời gian</th>
-            <th>Mô tả / Hoạt động</th>
-            <th>Tag</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="timeboxBody"></tbody>
-      </table>
-      <button class="global-add-btn" id="addTimeboxRow" style="margin-top:20px;">➕ Thêm khung giờ</button>
-    </div>
-    <!-- Clock Focus Panel -->
-    <div id="panel-clock" class="tab-panel">
-      <div class="panel-header">
-        <h2>⏰ CLOCK FOCUS</h2>
-        <span>STOPWATCH · COUNTDOWN</span>
-      </div>
-      <div class="clock-container">
-        <div class="clock-display">
-          <svg class="clock-circle" viewBox="0 0 200 200">
-            <defs>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-                <feMerge>
-                  <feMergeNode in="coloredBlur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-            <circle class="clock-bg" cx="100" cy="100" r="90"></circle>
-            <circle class="clock-progress" cx="100" cy="100" r="90" filter="url(#glow)"></circle>
-          </svg>
-          <div class="clock-time" id="clockTimeDisplay">00:00</div>
+  <!DOCTYPE html>
+  <html lang="vi">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 GM_H_NHAN OS · Root/Child/Canopy/Leaf</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Courier New', Courier, 'SF Mono', monospace;
+      }
+
+      body {
+        background: #0b1210;
+        color: #d2efe3;
+        padding: 2rem 2rem 1rem;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .os-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+        flex: 1;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 2px solid #2a6b53;
+        padding-bottom: 1.2rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        color: #b1f0da;
+        text-shadow: 0 0 12px #1a4d3b;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .sys-badge {
+        background: #13231e;
+        padding: 0.5rem 1.5rem;
+        border-radius: 40px;
+        border: 1px solid #3b8869;
+        font-weight: bold;
+        font-size: 0.9rem;
+        display: flex;
+        gap: 16px;
+        color: #bef0df;
+      }
+
+      .tabs-nav {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid #255f49;
+        padding-bottom: 2px;
+      }
+
+      .tab-btn {
+        background: transparent;
+        border: none;
+        color: #88bba9;
+        font-size: 1.2rem;
+        font-weight: bold;
+        padding: 10px 28px;
+        cursor: pointer;
+        border-radius: 30px 30px 0 0;
+        transition: all 0.15s;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+        border-bottom: none;
+      }
+
+      .tab-btn:hover {
+        color: #d4f5e8;
+        background: #152f26;
+      }
+
+      .tab-btn.active {
+        color: #e3ffee;
+        background: #12261f;
+        border-color: #2e7a5e #2e7a5e #12261f;
+        border-style: solid;
+        border-width: 1px;
+        box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .tab-panel {
+        display: none;
+        background: #0e1c17;
+        border: 1px solid #286349;
+        border-radius: 24px;
+        padding: 2rem 1.8rem;
+        box-shadow: 0 12px 0 #07100c;
+        margin-bottom: 2rem;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.8rem;
+      }
+
+      .panel-header h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #bff0dd;
+        letter-spacing: 1px;
+        border-left: 6px solid #53b38b;
+        padding-left: 20px;
+      }
+
+      .panel-header span {
+        margin-left: auto;
+        background: #1b3d31;
+        padding: 4px 16px;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        color: #a9ddcb;
+        border: 1px solid #468066;
+      }
+
+      /* ---------- TREE STYLES ---------- */
+      .tree-root-container { padding-left: 0; }
+      .tree-node { margin: 8px 0; list-style: none; }
+      .node-children { margin-left: 32px; border-left: 2px dashed #2e6b53; padding-left: 12px; }
+      .node-item { margin: 12px 0; }
+      .node-header { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 4px 0; }
+
+      .level-badge {
+        font-size: 0.7rem; padding: 2px 8px; border-radius: 20px;
+        background: #1c3a2f; color: #b3ddce; text-transform: uppercase;
+        letter-spacing: 0.5px; border: 1px solid #3e7862; min-width: 70px; text-align: center;
+      }
+      .level-0 .level-badge { background: #1a4a3a; color: #d0f5e7; border-color: #6ab896; }
+      .level-1 .level-badge { background: #1d4e5c; color: #c4eaff; }
+      .level-2 .level-badge { background: #4e5a28; color: #f3f0b2; }
+      .level-3 .level-badge { background: #4a2e5e; color: #e1bfff; }
+
+      .node-icon { font-size: 1.3rem; margin-right: 4px; }
+      .node-name-input {
+        background: transparent; border: none; border-bottom: 2px dashed #3a8366;
+        color: #dcf5ea; font-size: 1.15rem; font-weight: bold;
+        padding: 4px 8px 4px 0; min-width: 200px; outline: none;
+      }
+      .node-name-input:focus { border-bottom-color: #7ce0b5; }
+
+      .leaf-list { margin-left: 36px; margin-top: 6px; }
+      .leaf-item { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+      .leaf-item::before { content: "▹"; color: #5fc09a; font-size: 1.3rem; }
+      .leaf-input {
+        background: transparent; border: none; border-bottom: 1px solid #367a5e;
+        color: #e2f3e9; font-size: 1rem; padding: 4px 6px 4px 0; width: 100%; outline: none;
+      }
+      .leaf-input:focus { border-bottom-color: #8ae0bc; }
+      .node-actions { display: flex; gap: 6px; margin-left: 12px; }
+      .small-btn {
+        background: none; border: 1px dashed #438b6d; color: #9acfbb;
+        border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; cursor: pointer; transition: 0.15s;
+      }
+      .small-btn:hover { background: #1b4235; border: 1px solid #6fc2a0; color: #f0fff8; }
+      .delete-icon {
+        color: #cf8686; background: none; border: none; font-size: 1.2rem;
+        cursor: pointer; padding: 0 4px; opacity: 0.7;
+      }
+      .delete-icon:hover { opacity: 1; color: #ffa6a6; }
+      .global-add-btn {
+        background: none; border: 1px dashed #438b6d; color: #9acfbb;
+        border-radius: 30px; padding: 8px 20px; margin-top: 20px; font-size: 1rem; cursor: pointer;
+      }
+
+      /* ---------- MATRIX ---------- */
+      .matrix-quadrants { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .quadrant-card { background: #10231d; border-radius: 20px; padding: 16px 18px; border: 1px solid #2e6d55; }
+      .quadrant-title { font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+      .badge-q1 { background: #632e2e; color: #ffb5b5; padding: 4px 14px; border-radius: 20px; }
+      .badge-q2 { background: #1e5a6e; color: #b0e4ff; padding: 4px 14px; border-radius: 20px; }
+      .badge-q3 { background: #5e5826; color: #f9f0a0; padding: 4px 14px; border-radius: 20px; }
+      .badge-q4 { background: #3e4a44; color: #d4d4d4; padding: 4px 14px; border-radius: 20px; }
+
+      .task-table { width: 100%; border-collapse: collapse; }
+      .task-table td { padding: 8px 4px; border-bottom: 1px solid #28634b; }
+      .task-input-matrix {
+        width: 100%; background: transparent; border: none; border-bottom: 1px dotted #438667;
+        color: #e0f1e8; font-size: 0.95rem; padding: 6px 4px; outline: none;
+      }
+      .task-input-matrix:focus { border-bottom-color: #82dcb4; }
+      .add-task-sm {
+        background: none; border: 1px dashed #4e8e72; color: #aad9c5; border-radius: 30px;
+        padding: 6px 14px; margin-top: 12px; font-size: 0.8rem; cursor: pointer; width: 100%;
+      }
+
+      /* ---------- TIMEBOX ---------- */
+      .timebox-table { width: 100%; border-collapse: collapse; }
+      .timebox-table th { text-align: left; padding: 10px 8px 8px; color: #9ed1bd; border-bottom: 2px solid #276349; }
+      .timebox-table td { padding: 8px 8px; border-bottom: 1px solid #1f4f3c; }
+      .time-input-field { background: transparent; border: none; border-bottom: 1px dotted #3e8869; color: #eaf9f2; width: 110px; padding: 6px 4px; outline: none; }
+      .desc-input-field { background: transparent; border: none; border-bottom: 1px dotted #3e8869; color: #eaf9f2; width: 100%; padding: 6px 4px; outline: none; }
+      .tag-input-field { background: transparent; border: none; border-bottom: 1px dotted #3e8869; color: #c2e3d6; width: 90px; padding: 6px 4px; }
+
+      /* ---------- CLOCK FOCUS ---------- */
+      .clock-container { display: flex; flex-direction: column; align-items: center; padding: 20px; }
+      .clock-display { position: relative; width: 200px; height: 200px; margin-bottom: 24px; }
+      .clock-circle { width: 100%; height: 100%; transform: rotate(-90deg); }
+      .clock-bg { fill: none; stroke: #1a3d30; stroke-width: 8; }
+      .clock-progress {
+        fill: none; stroke: #4ec99e; stroke-width: 8; stroke-linecap: round;
+        stroke-dasharray: 565.48; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear;
+      }
+      .clock-time {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        font-size: 2.8rem; font-weight: bold; color: #d2efe3; text-shadow: 0 0 10px #2a6b53;
+      }
+      .clock-mode-selector { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; justify-content: center; }
+      .clock-mode-btn {
+        background: #132a22; border: 1px solid #3a7a5e; color: #9acfbb;
+        padding: 8px 14px; border-radius: 24px; font-size: 0.9rem; cursor: pointer; transition: all 0.15s;
+      }
+      .clock-mode-btn:hover { background: #1a3d30; }
+      .clock-mode-btn.active { background: #1f4d3c; border-color: #6fc2a0; color: #e3ffee; }
+      .clock-custom-input { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+      .clock-custom-input input {
+        background: #0b1410; border: 1px solid #2a5a44; color: #d2efe3;
+        padding: 8px 12px; border-radius: 8px; width: 70px; text-align: center; font-size: 1rem;
+      }
+      .clock-custom-input input:focus { border-color: #4ec99e; outline: none; }
+      .clock-laps {
+        background: #0b1410; border: 1px solid #2a5a44; border-radius: 12px;
+        padding: 12px; width: 100%; max-width: 300px; margin-bottom: 16px; max-height: 150px; overflow-y: auto;
+      }
+      .laps-header { color: #b1f0da; font-size: 0.9rem; margin-bottom: 8px; border-bottom: 1px solid #2a5a44; padding-bottom: 4px; }
+      .lap-item { display: flex; justify-content: space-between; padding: 4px 8px; color: #9acfbb; font-size: 0.85rem; }
+      .lap-item:nth-child(odd) { background: #142620; }
+      .clock-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+      .clock-actions .action-btn {
+        background: #1f4d3c; border: 1px solid #469a7a; color: #fff; padding: 8px 18px;
+        border-radius: 30px; font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: all 0.15s; min-width: 80px;
+      }
+      .clock-actions .action-btn:hover { background: #2a6b53; border-color: #6fc2a0; color: #e3ffee; }
+      .clock-actions .action-btn.start { background: #2a6b53; border-color: #5ec2a0; }
+      .clock-actions .action-btn.pause { background: #5a2a2a; border-color: #a65a5a; }
+      .clock-actions .action-btn.pause:hover { background: #7a3a3a; }
+      .clock-actions .action-btn.reset { background: #1a3d30; border-color: #3a7a5e; }
+      .clock-actions .action-btn.lap { background: #3a5a3a; border-color: #5a8a5a; display: none; }
+      .clock-actions .action-btn.lap:hover { background: #4a6a4a; }
+
+      /* ---------- NOTEBOOK & ARCHIVER ---------- */
+      .notebook-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+      .notebook-tab {
+        background: transparent; border: 1px solid #3a6b52; color: #8cbbad;
+        padding: 8px 20px; border-radius: 30px; font-size: 1rem; cursor: pointer; transition: all 0.15s;
+      }
+      .notebook-tab:hover { background: #152a22; }
+      .notebook-tab.active { background: #1f4d3c; border-color: #5ec2a0; color: #e3ffee; }
+      .notebook-content {
+        display: none; background: #0e1c17; border: 1px solid #2a6b53;
+        border-radius: 16px; padding: 20px; min-height: 300px;
+      }
+      .notebook-content.active { display: block; }
+
+      .text-editor-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+      .text-note-title { 
+        background: #0b1410; border: 1px solid #2a5a44; color: #d2efe3;
+        padding: 8px 12px; border-radius: 8px; outline: none; font-size: 1rem; flex: 1; min-width: 200px;
+      }
+      .text-note-title:focus { border-color: #4ec99e; }
+      .text-editor textarea {
+        width: 100%; height: 350px; background: #0b1410; border: 1px solid #2a5a44;
+        border-radius: 12px; color: #d2efe3; font-size: 1rem; padding: 16px;
+        resize: vertical; outline: none; font-family: 'Courier New', Courier, monospace;
+      }
+      .text-editor textarea:focus { border-color: #4ec99e; }
+
+      .small-action-btn {
+        background: #1f4d3c; border: 1px solid #469a7a; color: #fff;
+        padding: 8px 14px; border-radius: 30px; font-size: 0.85rem; cursor: pointer; transition: 0.15s;
+      }
+      .small-action-btn:hover { background: #2a6b53; }
+      .mini-status { color: #4ec99e; font-size: 0.8rem; margin-left: 6px; font-style: italic; }
+      .text-stats { margin-left: auto; font-size: 0.85rem; color: #8cbbad; }
+
+      .archiver-area { display: flex; flex-direction: column; gap: 12px; }
+      .archiver-input-area { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+      .archiver-input {
+        background: #0b1410; border: 1px solid #2a5a44; border-radius: 12px;
+        color: #d2efe3; padding: 10px 14px; font-size: 0.95rem; outline: none;
+      }
+      .archiver-input:focus { border-color: #4ec99e; }
+      .archiver-textarea {
+        background: #0b1410; border: 1px solid #2a5a44; border-radius: 12px;
+        color: #d2efe3; padding: 10px 14px; font-size: 0.9rem; outline: none;
+        min-height: 80px; resize: vertical; font-family: 'Courier New', Courier, monospace;
+      }
+      .archiver-textarea:focus { border-color: #4ec99e; }
+      .archiver-tags-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      .archiver-tag-input {
+        background: #0b1410; border: 1px solid #2a5a44; border-radius: 20px;
+        color: #d2efe3; padding: 6px 12px; font-size: 0.85rem; width: 150px; outline: none;
+      }
+      .archiver-tag-input:focus { border-color: #4ec99e; }
+      .archiver-tag {
+        background: #1f4d3c; border: 1px solid #469a7a; color: #e3ffee;
+        padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;
+      }
+      .archiver-tag:hover { background: #2a6b53; }
+      .archiver-add-btn {
+        background: #1f4d3c; border: 1px solid #469a7a; color: white;
+        padding: 8px 16px; border-radius: 40px; font-size: 0.9rem; font-weight: bold; cursor: pointer;
+      }
+      .archiver-add-btn:hover { background: #2a6b53; }
+      .archiver-list { display: flex; flex-direction: column; gap: 10px; max-height: 450px; overflow-y: auto; padding-right: 4px; }
+      .archiver-item {
+        background: #0f1d16; border: 1px solid #2a5a44; border-radius: 14px;
+        padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; transition: all 0.15s;
+      }
+      .archiver-item:hover { border-color: #3a7a5e; }
+      .archiver-item-header { display: flex; justify-content: space-between; align-items: center; }
+      .archiver-item-title { font-weight: bold; color: #bff0dd; font-size: 1rem; flex:1; margin-left: 8px;}
+      .archiver-item-date { font-size: 0.75rem; color: #7bb9a3; }
+      .archiver-item-desc {
+        color: #c8e3d9; font-size: 0.9rem; line-height: 1.4;
+        max-height: 60px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      }
+      .archiver-item-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+      .archiver-item-tag {
+        background: #1a3d30; border: 1px solid #3a7a5e; color: #b1f0da;
+        padding: 2px 10px; border-radius: 20px; font-size: 0.75rem;
+      }
+      .archiver-item-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;}
+
+      .archiver-open-btn, .archiver-del-btn, .archiver-edit-btn {
+        background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 4px 8px; transition: 0.15s;
+      }
+      .archiver-open-btn { color: #5ec2a0; }
+      .archiver-open-btn:hover { color: #8ae0bc; transform: scale(1.1); }
+      .archiver-del-btn { color: #cf8686; }
+      .archiver-del-btn:hover { color: #ffa6a6; transform: scale(1.1); }
+      .archiver-edit-btn { color: #9acfbb; }
+      .archiver-edit-btn:hover { color: #d2efe3; transform: scale(1.1); }
+      .archiver-empty { color: #639f88; text-align: center; padding: 40px; font-style: italic; }
+      .archiver-filter-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+      .archiver-filter {
+        background: #0b1410; border: 1px solid #2a5a44; border-radius: 20px;
+        color: #9acfbb; padding: 6px 14px; font-size: 0.85rem; outline: none; flex: 1;
+      }
+      .archiver-filter:focus { border-color: #4ec99e; }
+      .archiver-sort-select {
+        background: #0b1410; border: 1px solid #2a5a44; border-radius: 20px;
+        color: #9acfbb; padding: 6px 14px; font-size: 0.85rem; outline: none; cursor: pointer;
+      }
+
+      .file-crud-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+      .file-crud-btn {
+        background: #1a3d30; border: 1px solid #3a7a5e; color: #b1f0da;
+        padding: 6px 14px; border-radius: 30px; font-size: 0.85rem; cursor: pointer;
+      }
+      .file-crud-btn:hover { background: #2a6b53; color: #e3ffee; }
+
+      /* ---------- FOOTER ---------- */
+      .footer { display: flex; gap: 24px; margin-top: 10px; }
+      .rules-box, .progress-box {
+        background: #0e1f18; border: 1px solid #266349; border-radius: 20px; padding: 1.2rem 1.8rem; flex: 1;
+      }
+      .progress-item { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+      .progress-check { font-size: 1.8rem; cursor: pointer; user-select: none; }
+      .btn {
+        background: #1f4d3c; border: 1px solid #469a7a; color: white;
+        padding: 8px 18px; border-radius: 40px; font-weight: bold; cursor: pointer; margin-right: 12px;
+      }
+      .btn-outline { background: transparent; border: 1px dashed #60a589; }
+    </style>
+  </head>
+
+  <body>
+    <div class="os-container">
+      <div class="header">
+        <div>
+          <h1>🧠 GM_H_NHAN // OS</h1>
         </div>
-        <div class="clock-mode-selector">
-          <button class="clock-mode-btn active" data-mode="stopwatch">🏃 Stopwatch</button>
-          <button class="clock-mode-btn" data-mode="countdown">⏱️ Countdown</button>
-        </div>
-        <div class="clock-custom-input" id="clockCustomInput" style="display:none;">
-          <input type="number" id="customMinutes" min="1" max="999" value="25" placeholder="Phút"><span
-            style="color:#9acfbb">phút</span>
-        </div>
-        <div class="clock-laps" id="clockLaps" style="display:none;">
-          <div class="laps-header">📋 Laps</div>
-          <div class="laps-list" id="lapsList"></div>
-        </div>
-        <div class="clock-actions">
-          <button class="action-btn start" id="clockStartBtn">▶️ Start</button>
-          <button class="action-btn pause" id="clockPauseBtn" style="display:none;">⏸️ Pause</button>
-          <button class="action-btn reset" id="clockResetBtn">⏹️ Reset</button>
-          <button class="action-btn lap" id="clockLapBtn" style="display:none;">🏷️ Lap</button>
+        <div class="sys-badge">
+          <span id="liveClock">--:--:--</span>
+          <span>🔒 2FA ON</span>
+          <span>⚡ SYSTEM ACTIVE</span>
         </div>
       </div>
-    </div>
 
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="tree">🌳 KNOWLEDGE TREE</button>
+        <button class="tab-btn" data-tab="matrix">♟️ EISENHOWER MATRIX</button>
+        <button class="tab-btn" data-tab="timebox">📦 TIME BOXING</button>
+        <button class="tab-btn" data-tab="clock">⏰ CLOCK FOCUS</button>
+        <button class="tab-btn" data-tab="notebook">📓 NOTEBOOK LM</button>
+      </div>
 
-    <!-- Notebook Panel -->
-    <div id="panel-notebook" class="tab-panel">
-      <div class="panel-header">
-        <h2>📓 NOTEBOOK LM</h2>
-        <span>TEXT · ARCHIVER</span>
-      </div>
-      <div class="notebook-tabs">
-        <button class="notebook-tab active" data-type="text">📝 Text</button>
-        <button class="notebook-tab" data-type="archiver">🗄️ Archiver</button>
-      </div>
-      <div class="notebook-content text-editor active" id="notebookText">
-      <div class="text-editor-bar">
-          <button class="small-action-btn" id="textNewBtn">📄 Mới</button>
-          <button class="small-action-btn" id="textSaveBtn">💾 Lưu</button>
-          <button class="small-action-btn" id="textDownloadBtn">📥 Tải .txt</button>
-          <span class="mini-status" id="textStatus"></span>
-          <span class="text-stats" id="textStats">0 từ | 0 ký tự</span>
+      <!-- Tree Panel -->
+      <div id="panel-tree" class="tab-panel active">
+        <div class="panel-header">
+          <h2>🌳 KNOWLEDGE TREE · Phân cấp</h2>
+          <span>GỐC → CON → TÁN → LÁ</span>
         </div>
-        <textarea id="notebookTextArea" placeholder="Viết ghi chú của bạn..."></textarea>
+        <div id="treeContainer" class="tree-root-container"></div>
+        <button class="global-add-btn" id="addRootBranchBtn">➕ Thêm Nhánh Gốc (Root)</button>
+        <p style="color:#639f88; margin-top:16px;">
+          ▹ Nhánh gốc (level 0) → Nhánh con (level 1) → Nhánh tán (level 2) → Nhánh lá (level 3+) · Sửa tên trực tiếp.
+        </p>
       </div>
-      <div class="notebook-content" id="notebookArchiver" style="display:none;">
-        <div class="archiver-area">
-          <div class="archiver-input-area">
-            <input type="text" class="archiver-input" id="archiverTitle" placeholder="Tiêu đề ghi chú...">
-            <textarea class="archiver-textarea" id="archiverDesc" placeholder="Nội dung chi tiết..."></textarea>
-            <div class="archiver-tags-row">
-              <input type="text" class="archiver-tag-input" id="archiverTagInput" placeholder="#tag (Enter để thêm)">
-              <div class="archiver-item-tags" id="archiverCurrentTags"></div>
-              <button class="archiver-add-btn" id="archiverAddBtn">➕ Lưu ghi chú</button>
+
+      <!-- Matrix Panel -->
+      <div id="panel-matrix" class="tab-panel">
+        <div class="panel-header">
+          <h2>♟️ EISENHOWER MATRIX</h2>
+          <span>EXCEL-STYLE</span>
+        </div>
+        <div id="matrixGrid" class="matrix-quadrants"></div>
+      </div>
+
+      <!-- Timebox Panel -->
+      <div id="panel-timebox" class="tab-panel">
+        <div class="panel-header">
+          <h2>📦 TIME BOXING</h2>
+          <span>EDITABLE SLOTS</span>
+        </div>
+        <table class="timebox-table">
+          <thead>
+            <tr>
+              <th>Thời gian</th>
+              <th>Mô tả / Hoạt động</th>
+              <th>Tag</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="timeboxBody"></tbody>
+        </table>
+        <button class="global-add-btn" id="addTimeboxRow" style="margin-top:20px;">➕ Thêm khung giờ</button>
+      </div>
+
+      <!-- Clock Focus Panel -->
+      <div id="panel-clock" class="tab-panel">
+        <div class="panel-header">
+          <h2>⏰ CLOCK FOCUS</h2>
+          <span>STOPWATCH · COUNTDOWN</span>
+        </div>
+        <div class="clock-container">
+          <div class="clock-display">
+            <svg class="clock-circle" viewBox="0 0 200 200">
+              <defs>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                  <feMerge>
+                    <feMergeNode in="coloredBlur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <circle class="clock-bg" cx="100" cy="100" r="90"></circle>
+              <circle class="clock-progress" cx="100" cy="100" r="90" filter="url(#glow)"></circle>
+            </svg>
+            <div class="clock-time" id="clockTimeDisplay">00:00</div>
+          </div>
+          <div class="clock-mode-selector">
+            <button class="clock-mode-btn active" data-mode="stopwatch">🏃 Stopwatch</button>
+            <button class="clock-mode-btn" data-mode="countdown">⏱️ Countdown</button>
+          </div>
+          <div class="clock-custom-input" id="clockCustomInput" style="display:none;">
+            <input type="number" id="customMinutes" min="1" max="999" value="25" placeholder="Phút"><span
+              style="color:#9acfbb">phút</span>
+          </div>
+          <div class="clock-laps" id="clockLaps" style="display:none;">
+            <div class="laps-header">📋 Laps</div>
+            <div class="laps-list" id="lapsList"></div>
+          </div>
+          <div class="clock-actions">
+            <button class="action-btn start" id="clockStartBtn">▶️ Start</button>
+            <button class="action-btn pause" id="clockPauseBtn" style="display:none;">⏸️ Pause</button>
+            <button class="action-btn reset" id="clockResetBtn">⏹️ Reset</button>
+            <button class="action-btn lap" id="clockLapBtn" style="display:none;">🏷️ Lap</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notebook Panel -->
+      <div id="panel-notebook" class="tab-panel">
+        <div class="panel-header">
+          <h2>📓 NOTEBOOK LM</h2>
+          <span>FILE MANAGER & EDITOR</span>
+        </div>
+        <div class="notebook-tabs">
+          <button class="notebook-tab active" data-type="text">📝 Editor (Soạn thảo)</button>
+          <button class="notebook-tab" data-type="archiver">🗄️ Archiver (Quản lý File)</button>
+        </div>
+
+        <!-- Text Editor -->
+        <div class="notebook-content text-editor active" id="notebookText">
+          <div class="text-editor-bar">
+            <input type="text" id="textNoteTitle" class="text-note-title" placeholder="Tiêu đề ghi chú...">
+            <button class="small-action-btn" id="textNewBtn" title="Tạo ghi chú mới">📄 Mới</button>
+            <button class="small-action-btn" id="textSaveToArchiverBtn" title="Lưu ghi chú hiện tại vào Archiver">🗄️ Lưu vào Archiver</button>
+            <button class="small-action-btn" id="textDownloadDocBtn" title="Tải xuống định dạng Word (.doc)">📥 Tải .doc</button>
+            <button class="small-action-btn" id="textDownloadTxtBtn" title="Tải xuống định dạng văn bản thuần (.txt)">📥 Tải .txt</button>
+            <span class="mini-status" id="textStatus"></span>
+          </div>
+          <textarea id="notebookTextArea" placeholder="Viết nội dung ghi chú chi tiết của bạn tại đây..."></textarea>
+          <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+              <span class="text-stats" id="textStats">0 từ | 0 ký tự</span>
+          </div>
+        </div>
+
+        <!-- Archiver -->
+        <div class="notebook-content" id="notebookArchiver" style="display:none;">
+          <div class="archiver-area">
+            <div class="archiver-input-area" style="display:none;" id="archiverQuickAddArea">
+              <input type="text" class="archiver-input" id="archiverTitle" placeholder="Tiêu đề thêm nhanh...">
+              <textarea class="archiver-textarea" id="archiverDesc" placeholder="Nội dung tóm tắt..."></textarea>
+              <div class="archiver-tags-row">
+                <input type="text" class="archiver-tag-input" id="archiverTagInput" placeholder="#tag (Enter để thêm)">
+                <div class="archiver-item-tags" id="archiverCurrentTags"></div>
+                <button class="archiver-add-btn" id="archiverAddBtn">➕ Thêm nhanh</button>
+              </div>
+              <div style="display:flex; gap:8px; margin-top:8px;">
+                <select id="archiverPriority" style="background:#0b1410; border:1px solid #2a5a44; color:#d2efe3; padding:6px 12px; border-radius:8px;">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+                <input type="date" id="archiverDueDate" style="background:#0b1410; border:1px solid #2a5a44; color:#d2efe3; padding:6px 12px; border-radius:8px;">
+              </div>
             </div>
-            <div style="display:flex; gap:8px; margin-top:8px;">
-              <select id="archiverPriority" style="background:#0b1410; border:1px solid #2a5a44; color:#d2efe3; padding:6px 12px; border-radius:8px;">
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+
+            <div class="file-crud-bar">
+              <button class="file-crud-btn" id="toggleQuickAddBtn">⚡ Ẩn/Hiện Form Thêm Nhanh</button>
+              <button class="file-crud-btn" id="archiverExportBtn">📤 Xuất Data (.json)</button>
+              <button class="file-crud-btn" id="archiverImportBtn">📥 Nhập Data (.json)</button>
+              <button class="file-crud-btn" id="archiverBulkDeleteBtn" style="display:none;">🗑️ Xóa đã chọn</button>
+              <button class="file-crud-btn" id="archiverSelectAllBtn">✅ Chọn tất cả</button>
+              <input type="file" id="archiverFileIn" accept=".json" style="display:none;">
+            </div>
+
+            <div class="archiver-filter-row">
+              <input type="text" class="archiver-filter" id="archiverFilter" placeholder="🔍 Tìm kiếm file/ghi chú...">
+              <select class="archiver-sort-select" id="archiverSort">
+                <option value="newest">Mới nhất</option>
+                <option value="oldest">Cũ nhất</option>
+                <option value="title">Tiêu đề (A-Z)</option>
               </select>
-              <input type="date" id="archiverDueDate" style="background:#0b1410; border:1px solid #2a5a44; color:#d2efe3; padding:6px 12px; border-radius:8px;">
             </div>
+
+            <div class="archiver-list" id="archiverList"></div>
           </div>
-          <div class="file-crud-bar">
-            <button class="file-crud-btn" id="archiverExportBtn">📤 Xuất .json</button>
-            <button class="file-crud-btn" id="archiverImportBtn">📥 Nhập .json</button>
-            <button class="file-crud-btn" id="archiverTxtImportBtn">📥 Nhập .txt</button>
-            <button class="file-crud-btn" id="archiverBulkDeleteBtn" style="display:none;">🗑️ Xóa đã chọn</button>
-            <button class="file-crud-btn" id="archiverSelectAllBtn">✅ Chọn tất cả</button>
-            <input type="file" id="archiverFileIn" accept=".json" style="display:none;">
-            <input type="file" id="archiverTxtFileIn" accept=".txt" style="display:none;">
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="rules-box">
+          <h3 style="color:#b7ecdb;">⚖️ SYSTEM LAWS</h3>
+          <ul style="list-style:none; color:#c8e3d9;">
+            <li>🐕 Dogfooding · Sống trong file này</li>
+            <li>🧱 First Principles · Tối ưu từ cốt lõi</li>
+            <li>🔒 Zero Trust · Luôn xác thực</li>
+            <li>⚡ Consistency > Intensity · Đều đặn hơn cường độ</li>
+          </ul>
+        </div>
+        <div class="progress-box">
+          <h3 style="color:#b7ecdb;">📊 TIẾN ĐỘ CHIẾN LƯỢC</h3>
+          <div id="progressArea"></div>
+          <div style="margin-top:20px;">
+            <button class="btn" id="saveAllBtn">💾 Lưu toàn bộ HĐH</button>
+            <button class="btn btn-outline" id="resetDefaultsBtn">⟲ Reset mặc định</button>
           </div>
-          <div class="archiver-filter-row">
-            <input type="text" class="archiver-filter" id="archiverFilter" placeholder="🔍 Tìm kiếm...">
-            <select class="archiver-sort-select" id="archiverSort">
-              <option value="newest">Mới nhất</option>
-              <option value="oldest">Cũ nhất</option>
-              <option value="title">Tiêu đề (A-Z)</option>
-            </select>
-          </div>
-          <div class="archiver-list" id="archiverList"></div>
         </div>
       </div>
     </div>
-    <div class="footer">
-      <div class="rules-box">
-        <h3 style="color:#b7ecdb;">⚖️ SYSTEM LAWS</h3>
-        <ul style="list-style:none; color:#c8e3d9;">
-          <li>🐕 Dogfooding · Sống trong file này</li>
-          <li>🧱 First Principles · Không giải pháp hời hợt</li>
-          <li>🔒 Zero Trust · 2FA tuyệt đối</li>
-          <li>⚡ Consistency > Intensity</li>
-        </ul>
-      </div>
-      <div class="progress-box">
-        <h3 style="color:#b7ecdb;">📊 TIẾN ĐỘ LỘT XÁC</h3>
-        <div id="progressArea"></div>
-        <div style="margin-top:20px;">
-          <button class="btn" id="saveAllBtn">💾 Lưu toàn bộ</button>
-          <button class="btn btn-outline" id="resetDefaultsBtn">⟲ Reset mặc định</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <script>
-    (function () {
-      "use strict";
+    <script>
+      (function () {
+        "use strict";
 
-      // Cấu trúc cây với phân cấp rõ ràng
-      const DEFAULT_TREE = [
-        {
-          name: "📐 TOÁN HỌC (Gốc)",
-          children: [
-            {
-              name: "Bất đẳng thức (Con)",
-              children: [
-                { name: "Cauchy (Tán)", children: [], leaves: ["Dạng cơ bản", "Kỹ thuật chọn điểm rơi"] }
-              ],
-              leaves: ["Bunhiacopxki", "AM-GM"]
-            }
-          ],
-          leaves: ["Hình học phẳng", "Đại số nâng cao"]
-        },
-        {
-          name: "🇬🇧 ANH VĂN (Gốc)",
-          children: [],
-          leaves: ["Chuyên sâu Ngữ pháp", "Từ vựng Học thuật", "Luyện đề Chuyên Phan"]
-        },
-        {
-          name: "💻 COMPUTER SCIENCE (Gốc)",
-          children: [
-            { name: "Frontend (Con)", children: [], leaves: ["Vibe Coding", "UI/UX"] }
-          ],
-          leaves: ["System Architecture"]
-        }
-      ];
-
-      const DEFAULT_MATRIX = {
-        q1: ["[DEADLINE] Chuyên Phan mock test", "[FIX] Sửa bug BĐT", "[DEBT] 10 câu đọc hiểu"],
-        q2: ["Vibe Code 20p", "Vẽ cây Kiến thức", "Rèn First Principles"],
-        q3: ["Trả lời email không quan trọng"],
-        q4: ["Lướt mạng xã hội (hạn chế)"]
-      };
-
-      const DEFAULT_TIMEBOX = [
-        { time: "03:00 - 05:00", desc: "Deep Work (Toán/Anh)", tag: "Q1/Q2" },
-        { time: "05:00 - 05:30", desc: "System Review", tag: "Q2" },
-        { time: "21:00 - 21:20", desc: "Vibe Code Reward", tag: "Q2" },
-        { time: "22:00", desc: "System Shutdown", tag: "SLEEP" }
-      ];
-
-      const DEFAULT_PROGRESS = { targetPhan: false, treeHtml: false, timeboxIntegrated: false };
-
-      let state = {
-        tree: JSON.parse(JSON.stringify(DEFAULT_TREE)),
-        matrix: { ...DEFAULT_MATRIX },
-        timebox: [...DEFAULT_TIMEBOX],
-        progress: { ...DEFAULT_PROGRESS },
-        archiverItems: [],
-        currentTags: [],
-        selectedItems: [],
-        notebookText: '',
-        clockMode: 'stopwatch',
-        clockIsRunning: false,
-        clockElapsed: 0,
-        clockRemaining: 0,
-        clockLaps: []
-      };
-
-      function loadState() {
-        const saved = localStorage.getItem('GM_H_NHANOS_levels_v1');
-        if (saved) {
-          try {
-            const parsed = JSON.parse(saved);
-            state.tree = parsed.tree || DEFAULT_TREE;
-            state.matrix = parsed.matrix || DEFAULT_MATRIX;
-            state.timebox = parsed.timebox || DEFAULT_TIMEBOX;
-            state.progress = parsed.progress || DEFAULT_PROGRESS;
-            state.archiverItems = parsed.archiverItems || [];
-            state.notebookText = parsed.notebookText || '';
-            state.currentTags = []; // Luôn reset currentTags, không load từ storage
-            state.clockMode = parsed.clockMode || 'stopwatch';
-            // Không khôi phục clockElapsed và clockIsRunning theo yêu cầu
-            state.clockElapsed = 0;
-            state.clockIsRunning = false;
-            state.clockRemaining = parsed.clockRemaining || 0;
-            state.clockLaps = parsed.clockLaps || [];
-            // Load text into textarea
-            document.getElementById('notebookTextArea').value = state.notebookText;
-            updateTextStats();
-          } catch (e) { setDefaultState(); }
-        } else { setDefaultState(); }
-      }
-      function setDefaultState() {
-        state.tree = JSON.parse(JSON.stringify(DEFAULT_TREE));
-        state.matrix = JSON.parse(JSON.stringify(DEFAULT_MATRIX));
-        state.timebox = JSON.parse(JSON.stringify(DEFAULT_TIMEBOX));
-        state.progress = JSON.parse(JSON.stringify(DEFAULT_PROGRESS));
-        state.archiverItems = [];
-        state.currentTags = [];
-        state.clockMode = 'stopwatch';
-        state.clockIsRunning = false;
-        state.clockElapsed = 0;
-        state.clockRemaining = 0;
-        state.clockLaps = [];
-      }
-      function saveState() {
-        // Không lưu currentTags vào localStorage theo yêu cầu
-        const stateToSave = { ...state };
-        delete stateToSave.currentTags;
-        localStorage.setItem('GM_H_NHANOS_levels_v1', JSON.stringify(stateToSave));
-      }
-
-      function escapeHtml(text) { return String(text).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]); }
-
-      // Xác định level dựa vào độ sâu path
-      function getLevel(path) { return path.length; }
-
-      function getLevelLabel(level) {
-        const labels = ['GỐC', 'CON', 'TÁN', 'LÁ', 'LÁ+'];
-        return labels[level] || `CẤP ${level}`;
-      }
-
-      function renderTree() {
-        const container = document.getElementById('treeContainer');
-        container.innerHTML = '';
-        state.tree.forEach((node, idx) => {
-          container.appendChild(createNodeElement(node, [], idx));
-        });
-      }
-
-      function createNodeElement(node, path, index) {
-        const nodePath = [...path, index];
-        const level = getLevel(nodePath);
-        const li = document.createElement('li');
-        li.className = 'node-item';
-        li.dataset.path = JSON.stringify(nodePath);
-        li.classList.add(`level-${Math.min(level, 3)}`);
-
-        // Header
-        const headerDiv = document.createElement('div');
-        headerDiv.className = 'node-header';
-        headerDiv.innerHTML = `
-        <span class="level-badge">${getLevelLabel(level)}</span>
-        <span class="node-icon">${level === 0 ? '🌳' : '📁'}</span>
-        <input type="text" class="node-name-input" value="${escapeHtml(node.name)}" data-path='${JSON.stringify(nodePath)}' placeholder="Tên nhánh">
-        <div class="node-actions">
-          <button class="small-btn" data-action="addChild" data-path='${JSON.stringify(nodePath)}'>+ Nhánh con</button>
-          <button class="small-btn" data-action="addLeaf" data-path='${JSON.stringify(nodePath)}'>+ Lá</button>
-          <button class="delete-icon" data-action="deleteNode" data-path='${JSON.stringify(nodePath)}'>🗑️</button>
-        </div>
-      `;
-        li.appendChild(headerDiv);
-
-        // Leaves
-        if (node.leaves && node.leaves.length) {
-          const leavesDiv = document.createElement('div');
-          leavesDiv.className = 'leaf-list';
-          node.leaves.forEach((leaf, leafIdx) => {
-            const leafPath = [...nodePath, 'leaves', leafIdx];
-            const leafItem = document.createElement('div');
-            leafItem.className = 'leaf-item';
-            leafItem.innerHTML = `
-            <input type="text" class="leaf-input" value="${escapeHtml(leaf)}" data-leaf-path='${JSON.stringify(leafPath)}'>
-            <button class="delete-icon" data-action="deleteLeaf" data-leaf-path='${JSON.stringify(leafPath)}'>✕</button>
-          `;
-            leavesDiv.appendChild(leafItem);
-          });
-          li.appendChild(leavesDiv);
-        }
-
-        // Children (nhánh con/tán)
-        if (node.children && node.children.length) {
-          const ul = document.createElement('ul');
-          ul.className = 'node-children';
-          node.children.forEach((child, childIdx) => {
-            ul.appendChild(createNodeElement(child, nodePath, childIdx));
-          });
-          li.appendChild(ul);
-        }
-
-        return li;
-      }
-
-      function getNodeByPath(pathArray) {
-        let current = state.tree;
-        for (let i = 0; i < pathArray.length; i++) {
-          const idx = pathArray[i];
-          if (!current[idx]) return null;
-          if (i === pathArray.length - 1) return current[idx];
-          if (!current[idx].children) current[idx].children = [];
-          current = current[idx].children;
-        }
-        return null;
-      }
-
-      function getParentAndIndex(pathArray) {
-        if (pathArray.length === 0) return { parent: state, index: null, container: state.tree };
-        const parentPath = pathArray.slice(0, -1);
-        const index = pathArray[pathArray.length - 1];
-        let parentContainer = state.tree;
-        for (let i = 0; i < parentPath.length; i++) {
-          parentContainer = parentContainer[parentPath[i]].children;
-        }
-        return { parent: parentContainer, index, container: parentContainer };
-      }
-
-      function setupTreeEvents() {
-        const container = document.getElementById('treeContainer');
-
-        container.addEventListener('input', e => {
-          const t = e.target;
-          if (t.classList.contains('node-name-input')) {
-            const path = JSON.parse(t.dataset.path);
-            const node = getNodeByPath(path);
-            if (node) { node.name = t.value; saveState(); }
-          } else if (t.classList.contains('leaf-input')) {
-            const leafPath = JSON.parse(t.dataset.leafPath);
-            const nodePath = leafPath.slice(0, -2);
-            const leafIdx = leafPath[leafPath.length - 1];
-            const node = getNodeByPath(nodePath);
-            if (node && node.leaves) { node.leaves[leafIdx] = t.value; saveState(); }
-          }
-        });
-
-        container.addEventListener('click', e => {
-          const btn = e.target.closest('button');
-          if (!btn) return;
-          const action = btn.dataset.action;
-          if (!action) return;
-
-          if (action === 'addChild') {
-            const path = JSON.parse(btn.dataset.path);
-            const node = getNodeByPath(path);
-            if (node) {
-              if (!node.children) node.children = [];
-              const level = getLevel(path) + 1;
-              const defaultName = level === 1 ? 'Nhánh con' : (level === 2 ? 'Nhánh tán' : 'Nhánh lá');
-              node.children.push({ name: defaultName, children: [], leaves: [] });
-              renderTree(); saveState();
-            }
-          } else if (action === 'addLeaf') {
-            const path = JSON.parse(btn.dataset.path);
-            const node = getNodeByPath(path);
-            if (node) {
-              if (!node.leaves) node.leaves = [];
-              node.leaves.push('Lá mới');
-              renderTree(); saveState();
-            }
-          } else if (action === 'deleteNode') {
-            const path = JSON.parse(btn.dataset.path);
-            if (path.length === 0) return;
-            const { container, index } = getParentAndIndex(path);
-            if (container && index !== null) {
-              container.splice(index, 1);
-              renderTree(); saveState();
-            }
-          } else if (action === 'deleteLeaf') {
-            const leafPath = JSON.parse(btn.dataset.leafPath);
-            const nodePath = leafPath.slice(0, -2);
-            const leafIdx = leafPath[leafPath.length - 1];
-            const node = getNodeByPath(nodePath);
-            if (node && node.leaves) {
-              node.leaves.splice(leafIdx, 1);
-              renderTree(); saveState();
-            }
-          }
-        });
-      }
-
-      document.getElementById('addRootBranchBtn').addEventListener('click', () => {
-        state.tree.push({ name: 'Nhánh Gốc mới', children: [], leaves: [] });
-        renderTree(); saveState();
-      });
-
-      // Matrix & Timebox (giữ nguyên)
-      function renderMatrix() {
-        const grid = document.getElementById('matrixGrid');
-        const quads = [
-          { key: 'q1', title: '🔴 Q1 · Quan trọng & Khẩn', badge: 'badge-q1' },
-          { key: 'q2', title: '🔵 Q2 · Quan trọng & Không khẩn', badge: 'badge-q2' },
-          { key: 'q3', title: '🟡 Q3 · Không q.trọng & Khẩn', badge: 'badge-q3' },
-          { key: 'q4', title: '⚪ Q4 · Không q.trọng & Không khẩn', badge: 'badge-q4' }
-        ];
-        let html = '';
-        quads.forEach(q => {
-          const tasks = state.matrix[q.key] || [];
-          html += `<div class="quadrant-card">`;
-          html += `<div class="quadrant-title"><span class="${q.badge}">${q.key.toUpperCase()}</span> ${q.title}</div>`;
-          html += `<table class="task-table"><tbody>`;
-          tasks.forEach((task, idx) => {
-            html += `<tr><td><input class="task-input-matrix" value="${escapeHtml(task)}" data-quadrant="${q.key}" data-task-index="${idx}"></td>`;
-            html += `<td><button class="delete-icon" data-delete-task data-quadrant="${q.key}" data-task-index="${idx}">✕</button></td></tr>`;
-          });
-          html += `</tbody></table>`;
-          html += `<button class="add-task-sm" data-add-task="${q.key}">+ Thêm task</button>`;
-          html += `</div>`;
-        });
-        grid.innerHTML = html;
-      }
-
-      function renderTimebox() {
-        const tbody = document.getElementById('timeboxBody');
-        let html = '';
-        state.timebox.forEach((slot, idx) => {
-          html += `<tr>`;
-          html += `<td><input class="time-input-field" value="${escapeHtml(slot.time)}" data-timebox-index="${idx}" data-field="time"></td>`;
-          html += `<td><input class="desc-input-field" value="${escapeHtml(slot.desc)}" data-timebox-index="${idx}" data-field="desc"></td>`;
-          html += `<td><input class="tag-input-field" value="${escapeHtml(slot.tag)}" data-timebox-index="${idx}" data-field="tag"></td>`;
-          html += `<td><button class="delete-icon" data-delete-timebox="${idx}">🗑️</button></td>`;
-          html += `</tr>`;
-        });
-        tbody.innerHTML = html;
-      }
-
-      function renderProgress() {
-        const area = document.getElementById('progressArea');
-        const p = state.progress;
-        area.innerHTML = `
-        <div class="progress-item"><span class="progress-check" data-prog="targetPhan">${p.targetPhan ? '✅' : '⬜'}</span> Hoàn thành mục tiêu Chuyên Phan</div>
-        <div class="progress-item"><span class="progress-check" data-prog="treeHtml">${p.treeHtml ? '✅' : '⬜'}</span> Hoàn thiện Knowledge Tree HTML</div>
-        <div class="progress-item"><span class="progress-check" data-prog="timeboxIntegrated">${p.timeboxIntegrated ? '✅' : '⬜'}</span> Tích hợp Time Boxing</div>
-      `;
-      }
-
-      function setupMatrixTimeboxEvents() {
-        document.getElementById('matrixGrid').addEventListener('input', e => {
-          const t = e.target;
-          if (t.classList.contains('task-input-matrix')) {
-            const q = t.dataset.quadrant, idx = t.dataset.taskIndex;
-            if (q && idx !== undefined) state.matrix[q][idx] = t.value;
-            saveState();
-          }
-        });
-        document.getElementById('matrixGrid').addEventListener('click', e => {
-          const t = e.target;
-          if (t.dataset.addTask) {
-            const q = t.dataset.addTask;
-            state.matrix[q].push('Nhiệm vụ mới');
-            renderMatrix(); saveState();
-          } else if (t.dataset.deleteTask !== undefined) {
-            const q = t.dataset.quadrant, idx = t.dataset.taskIndex;
-            state.matrix[q].splice(idx, 1);
-            renderMatrix(); saveState();
-          }
-        });
-
-        document.getElementById('timeboxBody').addEventListener('input', e => {
-          const t = e.target, idx = t.dataset.timeboxIndex, field = t.dataset.field;
-          if (idx !== undefined && field) state.timebox[idx][field] = t.value;
-          saveState();
-        });
-        document.getElementById('timeboxBody').addEventListener('click', e => {
-          if (e.target.dataset.deleteTimebox !== undefined) {
-            state.timebox.splice(e.target.dataset.deleteTimebox, 1);
-            renderTimebox(); saveState();
-          }
-        });
-        document.getElementById('addTimeboxRow').addEventListener('click', () => {
-          state.timebox.push({ time: '00:00', desc: 'Mô tả', tag: 'tag' });
-          renderTimebox(); saveState();
-        });
-      }
-
-      // ==================== TEXT EDITOR FUNCTIONS ====================
-      function updateTextStats() {
-        const text = document.getElementById('notebookTextArea').value;
-        const chars = text.length;
-        const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-        document.getElementById('textStats').textContent = `${words} từ | ${chars} ký tự`;
-      }
-
-      function saveNotebookText() {
-        state.notebookText = document.getElementById('notebookTextArea').value;
-        saveState();
-        const status = document.getElementById('textStatus');
-        status.textContent = `Đã lưu lúc ${new Date().toLocaleTimeString()}`;
-        setTimeout(() => { status.textContent = ''; }, 3000);
-      }
-
-      function newNotebookText() {
-        if (confirm('Tạo ghi chú mới? Nội dung hiện tại sẽ mất nếu chưa lưu.')) {
-          document.getElementById('notebookTextArea').value = '';
-          state.notebookText = '';
-          saveState();
-          updateTextStats();
-          document.getElementById('textStatus').textContent = 'Đã tạo ghi chú mới';
-          setTimeout(() => { document.getElementById('textStatus').textContent = ''; }, 3000);
-        }
-      }
-
-      function downloadNotebookText() {
-        const text = document.getElementById('notebookTextArea').value;
-        const blob = new Blob([text], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `note_${new Date().toISOString().slice(0,10)}.txt`;
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-
-      // ==================== NOTEBOOK TABS ====================
-      function setupNotebookTabs() {
-        document.querySelectorAll('.notebook-tab').forEach(tab => {
-          tab.addEventListener('click', () => {
-            const type = tab.dataset.type;
-            document.querySelectorAll('.notebook-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            document.querySelectorAll('.notebook-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('notebook' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
-          });
-        });
-      }
-
-      // ==================== ARCHIVER FUNCTIONS ====================
-      let editingItemId = null;
-
-      function addTagToCurrent(tag) {
-        const tagInput = document.getElementById('archiverTagInput');
-        const container = document.getElementById('archiverCurrentTags');
-        if (!tag || state.currentTags.includes(tag)) return;
-        state.currentTags.push(tag);
-        const span = document.createElement('span');
-        span.className = 'archiver-tag';
-        span.textContent = tag;
-        span.dataset.tag = tag;
-        span.onclick = () => {
-          state.currentTags = state.currentTags.filter(t => t !== tag);
-          span.remove();
-        };
-        container.appendChild(span);
-        tagInput.value = '';
-        tagInput.focus();
-      }
-
-      function handleAddOrUpdateArchiverItem() {
-        const title = document.getElementById('archiverTitle').value.trim();
-        const desc = document.getElementById('archiverDesc').value.trim();
-        if (!title) { alert('Tiêu đề không được để trống!'); return; }
-        const priority = document.getElementById('archiverPriority').value;
-        const dueDate = document.getElementById('archiverDueDate').value;
-        const newItem = {
-          id: editingItemId ?? Date.now(),
-          title,
-          description: desc,
-          tags: [...state.currentTags],
-          timestamp: editingItemId
-            ? state.archiverItems.find(i => i.id === editingItemId).timestamp
-            : Date.now(),
-          priority,
-          dueDate
-        };
-        if (editingItemId) {
-          const idx = state.archiverItems.findIndex(i => i.id === editingItemId);
-          state.archiverItems[idx] = newItem;
-        } else {
-          state.archiverItems.push(newItem);
-        }
-        document.getElementById('archiverTitle').value = '';
-        document.getElementById('archiverDesc').value = '';
-        document.getElementById('archiverTagInput').value = '';
-        document.getElementById('archiverCurrentTags').innerHTML = '';
-        state.currentTags = [];
-        editingItemId = null;
-        document.getElementById('archiverAddBtn').textContent = '➕ Lưu ghi chú';
-        renderArchiverList();
-        saveState();
-      }
-
-      function renderArchiverList() {
-        const list = document.getElementById('archiverList');
-        list.innerHTML = '';
-        if (state.archiverItems.length === 0) {
-          list.innerHTML = '<p class="archiver-empty">Chưa có ghi chú nào. Hãy tạo một ghi chú mới!</p>';
-          return;
-        }
-        const sort = document.getElementById('archiverSort').value;
-        const sorted = [...state.archiverItems].sort((a, b) => {
-          if (sort === 'oldest') return a.timestamp - b.timestamp;
-          if (sort === 'title') return a.title.localeCompare(b.title);
-          return b.timestamp - a.timestamp;
-        });
-        const filter = document.getElementById('archiverFilter').value.toLowerCase();
-        const filtered = sorted.filter(item =>
-          item.title.toLowerCase().includes(filter) ||
-          item.description.toLowerCase().includes(filter) ||
-          item.tags.some(t => t.toLowerCase().includes(filter))
-        );
-        if (filtered.length === 0) {
-          list.innerHTML = '<p class="archiver-empty">Không tìm thấy ghi chú nào.</p>';
-          return;
-        }
-        filtered.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'archiver-item';
-          div.dataset.id = item.id;
-          const tagsHTML = item.tags.map(t => `<span class="archiver-item-tag">${escapeHtml(t)}</span>`).join('');
-          const priorityColors = { low: '#2a3e2a', medium: '#3e4a2a', high: '#4a2a2a' };
-          const priorityTextColors = { low: '#a8d5a8', medium: '#d5c78a', high: '#e5a8a8' };
-          const p = item.priority || 'low';
-          const priorityBadge = `<span class="archiver-item-tag" style="background:${priorityColors[p]};color:${priorityTextColors[p]};border-color:${priorityTextColors[p]}">${p.toUpperCase()}</span>`;
-          const dueDateSpan = item.dueDate ? `<span class="archiver-item-tag">📅 ${item.dueDate}</span>` : '';
-          const isChecked = state.selectedItems.includes(item.id) ? 'checked' : '';
-          div.innerHTML = `
-            <div class="archiver-item-header">
-              <input type="checkbox" class="archiver-checkbox" data-id="${item.id}" ${isChecked}>
-              <span class="archiver-item-title">${escapeHtml(item.title)}</span>
-              <span class="archiver-item-date">${new Date(item.timestamp).toLocaleString()}</span>
-            </div>
-            <div class="archiver-item-desc">${escapeHtml(item.description)}</div>
-            <div class="archiver-item-tags">${tagsHTML}</div>
-            <div class="archiver-item-meta" style="display:flex;gap:6px;margin-top:4px;">
-              ${priorityBadge}
-              ${dueDateSpan}
-            </div>
-            <div class="archiver-item-actions">
-              <button class="archiver-edit-btn">✏️</button>
-              <button class="archiver-del-btn">🗑️</button>
-            </div>
-          `;
-          list.appendChild(div);
-        });
-      }
-
-      function handleDeleteArchiverItem(id) {
-        if (confirm('Bạn có chắc muốn xóa ghi chú này?')) {
-          state.archiverItems = state.archiverItems.filter(i => i.id !== id);
-          renderArchiverList();
-          saveState();
-        }
-      }
-
-      function handleEditArchiverItem(id) {
-        const item = state.archiverItems.find(i => i.id === id);
-        if (!item) return;
-        editingItemId = id;
-        document.getElementById('archiverTitle').value = item.title;
-        document.getElementById('archiverDesc').value = item.description;
-        document.getElementById('archiverTagInput').value = '';
-        document.getElementById('archiverCurrentTags').innerHTML = '';
-        state.currentTags = [...item.tags];
-        item.tags.forEach(t => addTagToCurrent(t));
-        document.getElementById('archiverAddBtn').textContent = '🔄 Cập nhật';
-        document.getElementById('archiverTitle').focus();
-      }
-
-      function setupArchiverEvents() {
-        document.getElementById('archiverTagInput').addEventListener('keydown', e => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            let tag = e.target.value.trim();
-            if (tag && !tag.startsWith('#')) tag = '#' + tag;
-            addTagToCurrent(tag);
-          }
-        });
-        document.getElementById('archiverAddBtn').addEventListener('click', handleAddOrUpdateArchiverItem);
-        document.getElementById('archiverList').addEventListener('click', e => {
-          const btn = e.target;
-          const itemEl = btn.closest('.archiver-item');
-          if (!itemEl) return;
-          const id = Number(itemEl.dataset.id);
-          if (btn.classList.contains('archiver-del-btn')) handleDeleteArchiverItem(id);
-          if (btn.classList.contains('archiver-edit-btn')) handleEditArchiverItem(id);
-          if (btn.classList.contains('archiver-checkbox')) {
-            if (btn.checked) {
-              if (!state.selectedItems.includes(id)) state.selectedItems.push(id);
-            } else {
-              state.selectedItems = state.selectedItems.filter(i => i !== id);
-            }
-            document.getElementById('archiverBulkDeleteBtn').style.display = state.selectedItems.length ? 'inline-block' : 'none';
-          }
-        });
-        document.getElementById('archiverExportBtn').addEventListener('click', () => {
-          const blob = new Blob([JSON.stringify(state.archiverItems, null, 2)], {type:'application/json'});
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `archiver_${new Date().toISOString().slice(0,10)}.json`;
-          a.click();
-          URL.revokeObjectURL(url);
-        });
-        document.getElementById('archiverImportBtn').addEventListener('click', () => {
-          document.getElementById('archiverFileIn').click();
-        });
-        document.getElementById('archiverFileIn').addEventListener('change', e => {
-          const file = e.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = ev => {
-            try {
-              const parsed = JSON.parse(ev.target.result);
-              if (Array.isArray(parsed)) {
-                state.archiverItems = parsed;
-                renderArchiverList();
-                saveState();
-                alert('✅ Import thành công!');
-              } else {
-                alert('❌ File không phải định dạng ghi chú hợp lệ.');
+        // Cấu trúc mẫu chung chung
+        const DEFAULT_TREE = [
+          {
+            name: "📂 DỰ ÁN CHIẾN LƯỢC (Gốc)",
+            children: [
+              {
+                name: "Giai đoạn 1 (Con)",
+                children: [
+                  { name: "Phân tích (Tán)", children: [], leaves: ["Thu thập dữ liệu", "Đánh giá rủi ro"] }
+                ],
+                leaves: ["Kế hoạch tổng thể", "Phân bổ nhân sự"]
               }
-            } catch (err) {
-              console.error(err);
-              alert('❌ Lỗi khi đọc file JSON.');
+            ],
+            leaves: ["Báo cáo tiến độ", "Tài liệu kỹ thuật"]
+          },
+          {
+            name: "📖 HỌC TẬP & NGHIÊN CỨU (Gốc)",
+            children: [],
+            leaves: ["Kiến thức chuyên môn", "Kỹ năng mềm", "Tài liệu tham khảo"]
+          },
+          {
+            name: "💻 CÔNG NGHỆ THÔNG TIN (Gốc)",
+            children: [
+              { name: "Phát triển phần mềm (Con)", children: [], leaves: ["Thuật toán", "Kiến trúc hệ thống"] }
+            ],
+            leaves: ["Bảo mật thông tin"]
+          }
+        ];
+
+        const DEFAULT_MATRIX = {
+          q1: ["[KHẨN CẤP] Xử lý lỗi hệ thống", "[DEADLINE] Hoàn thành báo cáo Quý"],
+          q2: ["Phát triển kỹ năng cốt lõi", "Cập nhật tài liệu quy trình", "Tập thể dục duy trì sức khỏe"],
+          q3: ["Phản hồi email không quan trọng", "Họp cập nhật tiến độ (có thể ủy quyền)"],
+          q4: ["Lướt mạng xã hội vô thức"]
+        };
+
+        const DEFAULT_TIMEBOX = [
+          { time: "08:00 - 10:00", desc: "Tập trung sâu (Deep Work)", tag: "Q1/Q2" },
+          { time: "10:00 - 10:30", desc: "Kiểm tra hệ thống/Email", tag: "Q3" },
+          { time: "15:00 - 17:00", desc: "Nghiên cứu & Phát triển", tag: "Q2" },
+          { time: "22:00", desc: "Tổng kết & Tắt máy", tag: "REST" }
+        ];
+
+        const DEFAULT_PROGRESS = { target1: false, target2: false, target3: false };
+
+        let state = {
+          tree: JSON.parse(JSON.stringify(DEFAULT_TREE)),
+          matrix: { ...DEFAULT_MATRIX },
+          timebox: [...DEFAULT_TIMEBOX],
+          progress: { ...DEFAULT_PROGRESS },
+          archiverItems: [],
+          currentTags: [],
+          selectedItems: [],
+          clockMode: 'stopwatch',
+          clockIsRunning: false,
+          clockElapsed: 0,
+          clockRemaining: 0,
+          clockLaps: []
+        };
+
+        // ID của note đang được mở trong Text Editor
+        let activeTextNoteId = null;
+
+        function loadState() {
+          const saved = localStorage.getItem('GM_H_NHANOS_data_v1');
+          if (saved) {
+            try {
+              const parsed = JSON.parse(saved);
+              state.tree = parsed.tree || DEFAULT_TREE;
+              state.matrix = parsed.matrix || DEFAULT_MATRIX;
+              state.timebox = parsed.timebox || DEFAULT_TIMEBOX;
+              state.progress = parsed.progress || DEFAULT_PROGRESS;
+              state.archiverItems = parsed.archiverItems || [];
+              state.currentTags = [];
+              state.clockMode = parsed.clockMode || 'stopwatch';
+              state.clockElapsed = 0;
+              state.clockIsRunning = false;
+              state.clockRemaining = parsed.clockRemaining || 0;
+              state.clockLaps = parsed.clockLaps || [];
+            } catch (e) { setDefaultState(); }
+          } else { setDefaultState(); }
+        }
+
+        function setDefaultState() {
+          state.tree = JSON.parse(JSON.stringify(DEFAULT_TREE));
+          state.matrix = JSON.parse(JSON.stringify(DEFAULT_MATRIX));
+          state.timebox = JSON.parse(JSON.stringify(DEFAULT_TIMEBOX));
+          state.progress = JSON.parse(JSON.stringify(DEFAULT_PROGRESS));
+          state.archiverItems = [];
+          state.currentTags = [];
+          state.clockMode = 'stopwatch';
+          state.clockIsRunning = false;
+          state.clockElapsed = 0;
+          state.clockRemaining = 0;
+          state.clockLaps = [];
+          activeTextNoteId = null;
+        }
+
+        function saveState() {
+          const stateToSave = { ...state };
+          delete stateToSave.currentTags;
+          localStorage.setItem('GM_H_NHANOS_data_v1', JSON.stringify(stateToSave));
+        }
+
+        function escapeHtml(text) { return String(text).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]); }
+
+        // ==================== TREE ====================
+        function getLevel(path) { return path.length; }
+        function getLevelLabel(level) {
+          const labels = ['GỐC', 'CON', 'TÁN', 'LÁ', 'LÁ+'];
+          return labels[level] || `CẤP ${level}`;
+        }
+
+        function renderTree() {
+          const container = document.getElementById('treeContainer');
+          container.innerHTML = '';
+          state.tree.forEach((node, idx) => {
+            container.appendChild(createNodeElement(node, [], idx));
+          });
+        }
+
+        function createNodeElement(node, path, index) {
+          const nodePath = [...path, index];
+          const level = getLevel(nodePath);
+          const li = document.createElement('li');
+          li.className = 'node-item';
+          li.dataset.path = JSON.stringify(nodePath);
+          li.classList.add(`level-${Math.min(level, 3)}`);
+
+          const headerDiv = document.createElement('div');
+          headerDiv.className = 'node-header';
+          headerDiv.innerHTML = `
+          <span class="level-badge">${getLevelLabel(level)}</span>
+          <span class="node-icon">${level === 0 ? '🌳' : '📁'}</span>
+          <input type="text" class="node-name-input" value="${escapeHtml(node.name)}" data-path='${JSON.stringify(nodePath)}' placeholder="Tên nhánh">
+          <div class="node-actions">
+            <button class="small-btn" data-action="addChild" data-path='${JSON.stringify(nodePath)}'>+ Nhánh con</button>
+            <button class="small-btn" data-action="addLeaf" data-path='${JSON.stringify(nodePath)}'>+ Lá</button>
+            <button class="delete-icon" data-action="deleteNode" data-path='${JSON.stringify(nodePath)}'>🗑️</button>
+          </div>
+        `;
+          li.appendChild(headerDiv);
+
+          if (node.leaves && node.leaves.length) {
+            const leavesDiv = document.createElement('div');
+            leavesDiv.className = 'leaf-list';
+            node.leaves.forEach((leaf, leafIdx) => {
+              const leafPath = [...nodePath, 'leaves', leafIdx];
+              const leafItem = document.createElement('div');
+              leafItem.className = 'leaf-item';
+              leafItem.innerHTML = `
+              <input type="text" class="leaf-input" value="${escapeHtml(leaf)}" data-leaf-path='${JSON.stringify(leafPath)}'>
+              <button class="delete-icon" data-action="deleteLeaf" data-leaf-path='${JSON.stringify(leafPath)}'>✕</button>
+            `;
+              leavesDiv.appendChild(leafItem);
+            });
+            li.appendChild(leavesDiv);
+          }
+
+          if (node.children && node.children.length) {
+            const ul = document.createElement('ul');
+            ul.className = 'node-children';
+            node.children.forEach((child, childIdx) => {
+              ul.appendChild(createNodeElement(child, nodePath, childIdx));
+            });
+            li.appendChild(ul);
+          }
+          return li;
+        }
+
+        function getNodeByPath(pathArray) {
+          let current = state.tree;
+          for (let i = 0; i < pathArray.length; i++) {
+            const idx = pathArray[i];
+            if (!current[idx]) return null;
+            if (i === pathArray.length - 1) return current[idx];
+            if (!current[idx].children) current[idx].children = [];
+            current = current[idx].children;
+          }
+          return null;
+        }
+
+        function getParentAndIndex(pathArray) {
+          if (pathArray.length === 0) return { parent: state, index: null, container: state.tree };
+          const parentPath = pathArray.slice(0, -1);
+          const index = pathArray[pathArray.length - 1];
+          let parentContainer = state.tree;
+          for (let i = 0; i < parentPath.length; i++) {
+            parentContainer = parentContainer[parentPath[i]].children;
+          }
+          return { parent: parentContainer, index, container: parentContainer };
+        }
+
+        function setupTreeEvents() {
+          const container = document.getElementById('treeContainer');
+          container.addEventListener('input', e => {
+            const t = e.target;
+            if (t.classList.contains('node-name-input')) {
+              const path = JSON.parse(t.dataset.path);
+              const node = getNodeByPath(path);
+              if (node) { node.name = t.value; saveState(); }
+            } else if (t.classList.contains('leaf-input')) {
+              const leafPath = JSON.parse(t.dataset.leafPath);
+              const nodePath = leafPath.slice(0, -2);
+              const leafIdx = leafPath[leafPath.length - 1];
+              const node = getNodeByPath(nodePath);
+              if (node && node.leaves) { node.leaves[leafIdx] = t.value; saveState(); }
             }
-          };
-          reader.readAsText(file);
+          });
+
+          container.addEventListener('click', e => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const action = btn.dataset.action;
+            if (!action) return;
+
+            if (action === 'addChild') {
+              const path = JSON.parse(btn.dataset.path);
+              const node = getNodeByPath(path);
+              if (node) {
+                if (!node.children) node.children = [];
+                const level = getLevel(path) + 1;
+                const defaultName = level === 1 ? 'Nhánh con' : (level === 2 ? 'Nhánh tán' : 'Nhánh lá');
+                node.children.push({ name: defaultName, children: [], leaves: [] });
+                renderTree(); saveState();
+              }
+            } else if (action === 'addLeaf') {
+              const path = JSON.parse(btn.dataset.path);
+              const node = getNodeByPath(path);
+              if (node) {
+                if (!node.leaves) node.leaves = [];
+                node.leaves.push('Lá mới');
+                renderTree(); saveState();
+              }
+            } else if (action === 'deleteNode') {
+              const path = JSON.parse(btn.dataset.path);
+              if (path.length === 0) return;
+              const { container, index } = getParentAndIndex(path);
+              if (container && index !== null) {
+                container.splice(index, 1);
+                renderTree(); saveState();
+              }
+            } else if (action === 'deleteLeaf') {
+              const leafPath = JSON.parse(btn.dataset.leafPath);
+              const nodePath = leafPath.slice(0, -2);
+              const leafIdx = leafPath[leafPath.length - 1];
+              const node = getNodeByPath(nodePath);
+              if (node && node.leaves) {
+                node.leaves.splice(leafIdx, 1);
+                renderTree(); saveState();
+              }
+            }
+          });
+        }
+
+        document.getElementById('addRootBranchBtn').addEventListener('click', () => {
+          state.tree.push({ name: 'Nhánh Gốc mới', children: [], leaves: [] });
+          renderTree(); saveState();
         });
-        // .txt import
-        document.getElementById('archiverTxtImportBtn').addEventListener('click', () => {
-          document.getElementById('archiverTxtFileIn').click();
-        });
-        document.getElementById('archiverTxtFileIn').addEventListener('change', e => {
-          const file = e.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = ev => {
-            const content = ev.target.result;
+
+        // ==================== MATRIX & TIMEBOX ====================
+        function renderMatrix() {
+          const grid = document.getElementById('matrixGrid');
+          const quads = [
+            { key: 'q1', title: '🔴 Q1 · Quan trọng & Khẩn', badge: 'badge-q1' },
+            { key: 'q2', title: '🔵 Q2 · Quan trọng & Không khẩn', badge: 'badge-q2' },
+            { key: 'q3', title: '🟡 Q3 · Không q.trọng & Khẩn', badge: 'badge-q3' },
+            { key: 'q4', title: '⚪ Q4 · Không q.trọng & Không khẩn', badge: 'badge-q4' }
+          ];
+          let html = '';
+          quads.forEach(q => {
+            const tasks = state.matrix[q.key] || [];
+            html += `<div class="quadrant-card">`;
+            html += `<div class="quadrant-title"><span class="${q.badge}">${q.key.toUpperCase()}</span> ${q.title}</div>`;
+            html += `<table class="task-table"><tbody>`;
+            tasks.forEach((task, idx) => {
+              html += `<tr><td><input class="task-input-matrix" value="${escapeHtml(task)}" data-quadrant="${q.key}" data-task-index="${idx}"></td>`;
+              html += `<td><button class="delete-icon" data-delete-task data-quadrant="${q.key}" data-task-index="${idx}">✕</button></td></tr>`;
+            });
+            html += `</tbody></table>`;
+            html += `<button class="add-task-sm" data-add-task="${q.key}">+ Thêm task</button>`;
+            html += `</div>`;
+          });
+          grid.innerHTML = html;
+        }
+
+        function renderTimebox() {
+          const tbody = document.getElementById('timeboxBody');
+          let html = '';
+          state.timebox.forEach((slot, idx) => {
+            html += `<tr>`;
+            html += `<td><input class="time-input-field" value="${escapeHtml(slot.time)}" data-timebox-index="${idx}" data-field="time"></td>`;
+            html += `<td><input class="desc-input-field" value="${escapeHtml(slot.desc)}" data-timebox-index="${idx}" data-field="desc"></td>`;
+            html += `<td><input class="tag-input-field" value="${escapeHtml(slot.tag)}" data-timebox-index="${idx}" data-field="tag"></td>`;
+            html += `<td><button class="delete-icon" data-delete-timebox="${idx}">🗑️</button></td>`;
+            html += `</tr>`;
+          });
+          tbody.innerHTML = html;
+        }
+
+        function renderProgress() {
+          const area = document.getElementById('progressArea');
+          const p = state.progress;
+          area.innerHTML = `
+          <div class="progress-item"><span class="progress-check" data-prog="target1">${p.target1 ? '✅' : '⬜'}</span> Hoàn thành mục tiêu quan trọng số 1</div>
+          <div class="progress-item"><span class="progress-check" data-prog="target2">${p.target2 ? '✅' : '⬜'}</span> Hoàn thiện cây tri thức cá nhân</div>
+          <div class="progress-item"><span class="progress-check" data-prog="target3">${p.target3 ? '✅' : '⬜'}</span> Thiết lập lịch trình nhất quán</div>
+        `;
+        }
+
+        function setupMatrixTimeboxEvents() {
+          document.getElementById('matrixGrid').addEventListener('input', e => {
+            const t = e.target;
+            if (t.classList.contains('task-input-matrix')) {
+              const q = t.dataset.quadrant, idx = t.dataset.taskIndex;
+              if (q && idx !== undefined) state.matrix[q][idx] = t.value;
+              saveState();
+            }
+          });
+          document.getElementById('matrixGrid').addEventListener('click', e => {
+            const t = e.target;
+            if (t.dataset.addTask) {
+              const q = t.dataset.addTask;
+              state.matrix[q].push('Nhiệm vụ mới');
+              renderMatrix(); saveState();
+            } else if (t.dataset.deleteTask !== undefined) {
+              const q = t.dataset.quadrant, idx = t.dataset.taskIndex;
+              state.matrix[q].splice(idx, 1);
+              renderMatrix(); saveState();
+            }
+          });
+
+          document.getElementById('timeboxBody').addEventListener('input', e => {
+            const t = e.target, idx = t.dataset.timeboxIndex, field = t.dataset.field;
+            if (idx !== undefined && field) state.timebox[idx][field] = t.value;
+            saveState();
+          });
+          document.getElementById('timeboxBody').addEventListener('click', e => {
+            if (e.target.dataset.deleteTimebox !== undefined) {
+              state.timebox.splice(e.target.dataset.deleteTimebox, 1);
+              renderTimebox(); saveState();
+            }
+          });
+          document.getElementById('addTimeboxRow').addEventListener('click', () => {
+            state.timebox.push({ time: '00:00', desc: 'Mô tả', tag: 'tag' });
+            renderTimebox(); saveState();
+          });
+        }
+
+        // ==================== NOTEBOOK EDITOR & ARCHIVER LINK ====================
+        function updateTextStats() {
+          const text = document.getElementById('notebookTextArea').value;
+          const chars = text.length;
+          const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+          document.getElementById('textStats').textContent = `${words} từ | ${chars} ký tự`;
+        }
+
+        function loadNoteIntoEditor(id) {
+          const note = state.archiverItems.find(i => i.id === id);
+          if (!note) return;
+          activeTextNoteId = id;
+          document.getElementById('textNoteTitle').value = note.title;
+          document.getElementById('notebookTextArea').value = note.description;
+          updateTextStats();
+
+          // Chuyển sang tab Editor
+          document.querySelectorAll('.notebook-tab').forEach(t => t.classList.remove('active'));
+          document.querySelector('.notebook-tab[data-type="text"]').classList.add('active');
+          document.querySelectorAll('.notebook-content').forEach(c => c.classList.remove('active'));
+          document.getElementById('notebookText').classList.add('active');
+
+          const status = document.getElementById('textStatus');
+          status.textContent = 'Đã mở ghi chú từ Archiver';
+          setTimeout(() => { status.textContent = ''; }, 3000);
+        }
+
+        function saveEditorToArchiver() {
+          const titleInput = document.getElementById('textNoteTitle').value.trim();
+          const finalTitle = titleInput || 'Ghi chú chưa đặt tên';
+          const desc = document.getElementById('notebookTextArea').value;
+
+          if (activeTextNoteId) {
+            // Update existing
+            const idx = state.archiverItems.findIndex(i => i.id === activeTextNoteId);
+            if (idx > -1) {
+              state.archiverItems[idx].title = finalTitle;
+              state.archiverItems[idx].description = desc;
+              state.archiverItems[idx].timestamp = Date.now();
+            }
+          } else {
+            // Create new
             const newItem = {
               id: Date.now(),
-              title: file.name.replace('.txt', ''),
-              description: content,
-              tags: ['#imported'],
+              title: finalTitle,
+              description: desc,
+              tags: ['#note'],
               timestamp: Date.now(),
-              priority: 'low',
+              priority: 'medium',
               dueDate: ''
             };
             state.archiverItems.push(newItem);
-            renderArchiverList();
-            saveState();
-            alert('✅ Import .txt thành công!');
-          };
-          reader.readAsText(file);
-        });
-        // Bulk delete
-        document.getElementById('archiverBulkDeleteBtn').addEventListener('click', () => {
-          if (state.selectedItems.length === 0) return;
-          if (confirm(`Xóa ${state.selectedItems.length} ghi chú đã chọn?`)) {
-            state.archiverItems = state.archiverItems.filter(i => !state.selectedItems.includes(i.id));
-            state.selectedItems = [];
-            renderArchiverList();
-            saveState();
-            document.getElementById('archiverBulkDeleteBtn').style.display = 'none';
+            activeTextNoteId = newItem.id;
           }
-        });
-        // Select all
-        document.getElementById('archiverSelectAllBtn').addEventListener('click', () => {
-          if (state.selectedItems.length === state.archiverItems.length) {
-            // Deselect all
-            state.selectedItems = [];
-            document.getElementById('archiverSelectAllBtn').textContent = '✅ Chọn tất cả';
-          } else {
-            // Select all
-            state.selectedItems = state.archiverItems.map(i => i.id);
-            document.getElementById('archiverSelectAllBtn').textContent = '❌ Bỏ chọn tất cả';
-          }
+
+          saveState();
           renderArchiverList();
-          document.getElementById('archiverBulkDeleteBtn').style.display = state.selectedItems.length ? 'inline-block' : 'none';
-        });
-        document.getElementById('archiverFilter').addEventListener('input', renderArchiverList);
-        document.getElementById('archiverSort').addEventListener('change', renderArchiverList);
-      }
 
-      // ==================== CLOCK FUNCTIONS ====================
-      let clockInterval = null;
-
-      function formatMMSS(ms) {
-        const total = Math.max(0, Math.floor(ms / 1000));
-        const m = Math.floor(total / 60);
-        const s = total % 60;
-        return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-      }
-
-      function updateProgressCircle() {
-        const circle = document.querySelector('.clock-progress');
-        if (!circle) return;
-        const radius = 90;
-        const perimeter = 2 * Math.PI * radius;
-        circle.style.strokeDasharray = `${perimeter} ${perimeter}`;
-        let proportion = 0;
-        if (state.clockMode === 'countdown') {
-          const mins = parseInt(document.getElementById('customMinutes').value) || 25;
-          const totalMs = mins * 60 * 1000;
-          proportion = state.clockRemaining / totalMs;
+          const status = document.getElementById('textStatus');
+          status.textContent = `✅ Đã lưu vào Archiver lúc ${new Date().toLocaleTimeString()}`;
+          setTimeout(() => { status.textContent = ''; }, 3000);
         }
-        const offset = perimeter * (1 - proportion);
-        circle.style.strokeDashoffset = offset;
-      }
 
-      function updateClockUI() {
-        const display = document.getElementById('clockTimeDisplay');
-        const startBtn = document.getElementById('clockStartBtn');
-        const pauseBtn = document.getElementById('clockPauseBtn');
-        const resetBtn = document.getElementById('clockResetBtn');
-        const lapBtn = document.getElementById('clockLapBtn');
-        const time = state.clockMode === 'stopwatch' ? state.clockElapsed : state.clockRemaining;
-        display.textContent = formatMMSS(time);
-        startBtn.style.display = state.clockIsRunning ? 'none' : 'inline-block';
-        pauseBtn.style.display = state.clockIsRunning ? 'inline-block' : 'none';
-        lapBtn.style.display = (state.clockMode === 'stopwatch' && state.clockIsRunning) ? 'inline-block' : 'none';
-        document.getElementById('clockLaps').style.display = state.clockLaps.length ? 'block' : 'none';
-        updateProgressCircle();
-      }
+        function resetEditorNote() {
+          if (confirm('Tạo ghi chú mới? Bản nháp hiện tại sẽ mất nếu bạn chưa nhấn "Lưu vào Archiver".')) {
+            activeTextNoteId = null;
+            document.getElementById('textNoteTitle').value = '';
+            document.getElementById('notebookTextArea').value = '';
+            updateTextStats();
+            const status = document.getElementById('textStatus');
+            status.textContent = 'Đã tạo trang mới';
+            setTimeout(() => { status.textContent = ''; }, 3000);
+          }
+        }
 
-      function renderLapList() {
-        const container = document.getElementById('lapsList');
-        container.innerHTML = '';
-        state.clockLaps.forEach(lap => {
-          const div = document.createElement('div');
-          div.className = 'lap-item';
-          div.innerHTML = `<span>Lap ${lap.lap}</span><span>${formatMMSS(lap.time)}</span>`;
-          container.appendChild(div);
-        });
-      }
+        function downloadTxt() {
+          const text = document.getElementById('notebookTextArea').value;
+          const title = document.getElementById('textNoteTitle').value.trim() || 'Note';
+          const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+          downloadBlob(blob, `${title}.txt`);
+        }
 
-      function startClock() {
-        if (state.clockIsRunning) return;
-        if (state.clockMode === 'countdown' && state.clockRemaining <= 0) {
-          const mins = parseInt(document.getElementById('customMinutes').value);
-          if (isNaN(mins) || mins <= 0) {
-            alert('Vui lòng nhập số phút hợp lệ.');
+        function downloadDoc() {
+          const text = document.getElementById('notebookTextArea').value;
+          const title = document.getElementById('textNoteTitle').value.trim() || 'Note';
+          // Thêm BOM utf-8 cho Word
+          const htmlContent = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><meta charset='utf-8'><title>${escapeHtml(title)}</title></head>
+            <body>
+              <h1>${escapeHtml(title)}</h1>
+              <p>${text.replace(/\n/g, '<br>')}</p>
+            </body>
+            </html>
+          `;
+          const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+          downloadBlob(blob, `${title}.doc`);
+        }
+
+        function downloadBlob(blob, filename) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+
+        // ==================== ARCHIVER LIST & TAGS ====================
+        let editingQuickId = null;
+
+        function addTagToCurrent(tag) {
+          const tagInput = document.getElementById('archiverTagInput');
+          const container = document.getElementById('archiverCurrentTags');
+          if (!tag || state.currentTags.includes(tag)) return;
+          state.currentTags.push(tag);
+          const span = document.createElement('span');
+          span.className = 'archiver-tag';
+          span.textContent = tag;
+          span.dataset.tag = tag;
+          span.onclick = () => {
+            state.currentTags = state.currentTags.filter(t => t !== tag);
+            span.remove();
+          };
+          container.appendChild(span);
+          tagInput.value = '';
+          tagInput.focus();
+        }
+
+        function handleQuickAddOrUpdate() {
+          const title = document.getElementById('archiverTitle').value.trim();
+          const desc = document.getElementById('archiverDesc').value.trim();
+          if (!title) { alert('Tiêu đề không được để trống!'); return; }
+          const priority = document.getElementById('archiverPriority').value;
+          const dueDate = document.getElementById('archiverDueDate').value;
+
+          const newItem = {
+            id: editingQuickId ?? Date.now(),
+            title,
+            description: desc,
+            tags: [...state.currentTags],
+            timestamp: editingQuickId
+              ? state.archiverItems.find(i => i.id === editingQuickId).timestamp
+              : Date.now(),
+            priority,
+            dueDate
+          };
+
+          if (editingQuickId) {
+            const idx = state.archiverItems.findIndex(i => i.id === editingQuickId);
+            state.archiverItems[idx] = newItem;
+            // Nếu đang mở note này trong Editor, update luôn Editor
+            if(activeTextNoteId === editingQuickId) {
+               document.getElementById('textNoteTitle').value = title;
+               document.getElementById('notebookTextArea').value = desc;
+            }
+          } else {
+            state.archiverItems.push(newItem);
+          }
+
+          // Reset form nhanh
+          document.getElementById('archiverTitle').value = '';
+          document.getElementById('archiverDesc').value = '';
+          document.getElementById('archiverTagInput').value = '';
+          document.getElementById('archiverCurrentTags').innerHTML = '';
+          state.currentTags = [];
+          editingQuickId = null;
+          document.getElementById('archiverAddBtn').textContent = '➕ Thêm nhanh';
+          renderArchiverList();
+          saveState();
+        }
+
+        function renderArchiverList() {
+          const list = document.getElementById('archiverList');
+          list.innerHTML = '';
+          if (state.archiverItems.length === 0) {
+            list.innerHTML = '<p class="archiver-empty">Kho lưu trữ trống. Hãy soạn thảo và lưu vào Archiver!</p>';
             return;
           }
-          state.clockRemaining = mins * 60 * 1000;
-        }
-        state.clockIsRunning = true;
-        state.clockStartTime = Date.now();
-        clockInterval = setInterval(tickClock, 250);
-        updateClockUI();
-      }
 
-      function pauseClock() {
-        if (!state.clockIsRunning) return;
-        clearInterval(clockInterval);
-        clockInterval = null;
-        state.clockIsRunning = false;
-        const delta = Date.now() - state.clockStartTime;
-        if (state.clockMode === 'stopwatch') {
-          state.clockElapsed += delta;
-        } else {
-          state.clockRemaining = Math.max(0, state.clockRemaining - delta);
-        }
-        updateClockUI();
-      }
-
-      function resetClock() {
-        clearInterval(clockInterval);
-        clockInterval = null;
-        state.clockIsRunning = false;
-        state.clockElapsed = 0;
-        state.clockLaps = [];
-        const mins = parseInt(document.getElementById('customMinutes').value) || 25;
-        state.clockRemaining = mins * 60 * 1000;
-        updateClockUI();
-        renderLapList();
-      }
-
-      function tickClock() {
-        const now = Date.now();
-        const delta = now - state.clockStartTime;
-        if (state.clockMode === 'stopwatch') {
-          state.clockElapsed = state.clockElapsed + delta;
-          state.clockStartTime = now;
-        } else {
-          state.clockRemaining = Math.max(0, state.clockRemaining - delta);
-          state.clockStartTime = now;
-          if (state.clockRemaining <= 0) {
-            pauseClock();
-            alert('⏰ Hết giờ!');
-          }
-        }
-        updateClockUI();
-      }
-
-      function addLap() {
-        if (state.clockMode !== 'stopwatch' || !state.clockIsRunning) return;
-        const lapNumber = state.clockLaps.length + 1;
-        const lapTime = state.clockElapsed;
-        state.clockLaps.unshift({ lap: lapNumber, time: lapTime });
-        renderLapList();
-      }
-
-      function switchMode(mode) {
-        if (mode !== 'stopwatch' && mode !== 'countdown') return;
-        state.clockMode = mode;
-        resetClock();
-        document.querySelectorAll('.clock-mode-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.mode === mode);
-        });
-        document.getElementById('clockCustomInput').style.display = mode === 'countdown' ? 'flex' : 'none';
-        document.getElementById('clockLapBtn').style.display = mode === 'stopwatch' ? 'inline-block' : 'none';
-      }
-
-      function setupClockEvents() {
-        document.querySelectorAll('.clock-mode-btn').forEach(btn => {
-          btn.addEventListener('click', () => switchMode(btn.dataset.mode));
-        });
-        document.getElementById('clockStartBtn').addEventListener('click', startClock);
-        document.getElementById('clockPauseBtn').addEventListener('click', pauseClock);
-        document.getElementById('clockResetBtn').addEventListener('click', resetClock);
-        document.getElementById('clockLapBtn').addEventListener('click', addLap);
-      }
-
-      function initClock() {
-        // Set active mode button
-        document.querySelectorAll('.clock-mode-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.mode === state.clockMode);
-        });
-        // Show/hide custom input and lap button based on mode
-        document.getElementById('clockCustomInput').style.display = state.clockMode === 'countdown' ? 'flex' : 'none';
-        document.getElementById('clockLapBtn').style.display = state.clockMode === 'stopwatch' ? 'inline-block' : 'none';
-        // Update clock display and progress circle
-        updateClockUI();
-        // Render laps
-        renderLapList();
-      }
-
-      function init() {
-        loadState();
-        renderTree();
-        renderMatrix();
-        renderTimebox();
-        renderProgress();
-        setupTreeEvents();
-        setupMatrixTimeboxEvents();
-
-      // Setup notebook tabs
-      setupNotebookTabs();
-
-      // Setup text editor events
-      document.getElementById('notebookTextArea').addEventListener('input', () => {
-        updateTextStats();
-        // Auto-save on input (optional)
-        // state.notebookText = document.getElementById('notebookTextArea').value;
-        // saveState();
-      });
-      document.getElementById('textNewBtn').addEventListener('click', newNotebookText);
-      document.getElementById('textSaveBtn').addEventListener('click', saveNotebookText);
-      document.getElementById('textDownloadBtn').addEventListener('click', downloadNotebookText);
-
-      // Setup archiver
-      setupArchiverEvents();
-      renderArchiverList();
-
-        // Setup clock
-        setupClockEvents();
-        // Initialize clock UI (mode, display, laps)
-        initClock();
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const tabId = btn.dataset.tab;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            document.getElementById(`panel-${tabId}`).classList.add('active');
+          const sort = document.getElementById('archiverSort').value;
+          const sorted = [...state.archiverItems].sort((a, b) => {
+            if (sort === 'oldest') return a.timestamp - b.timestamp;
+            if (sort === 'title') return a.title.localeCompare(b.title);
+            return b.timestamp - a.timestamp; // newest
           });
-        });
 
-        document.getElementById('saveAllBtn').addEventListener('click', () => { saveState(); alert('✅ Đã lưu.'); });
-        document.getElementById('resetDefaultsBtn').addEventListener('click', () => {
-          if (confirm('Reset về mặc định?')) { setDefaultState(); renderTree(); renderMatrix(); renderTimebox(); renderProgress(); saveState(); }
-        });
+          const filter = document.getElementById('archiverFilter').value.toLowerCase();
+          const filtered = sorted.filter(item =>
+            item.title.toLowerCase().includes(filter) ||
+            item.description.toLowerCase().includes(filter) ||
+            item.tags.some(t => t.toLowerCase().includes(filter))
+          );
 
-        document.getElementById('progressArea').addEventListener('click', e => {
-          const span = e.target.closest('.progress-check');
-          if (span && span.dataset.prog) {
-            const key = span.dataset.prog;
-            state.progress[key] = !state.progress[key];
-            renderProgress(); saveState();
+          if (filtered.length === 0) {
+            list.innerHTML = '<p class="archiver-empty">Không tìm thấy file/ghi chú phù hợp.</p>';
+            return;
           }
-        });
 
-        setInterval(() => {
+          filtered.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'archiver-item';
+            div.dataset.id = item.id;
+            const tagsHTML = item.tags.map(t => `<span class="archiver-item-tag">${escapeHtml(t)}</span>`).join('');
+            const priorityColors = { low: '#2a3e2a', medium: '#3e4a2a', high: '#4a2a2a' };
+            const priorityTextColors = { low: '#a8d5a8', medium: '#d5c78a', high: '#e5a8a8' };
+            const p = item.priority || 'low';
+            const priorityBadge = `<span class="archiver-item-tag" style="background:${priorityColors[p]};color:${priorityTextColors[p]};border-color:${priorityTextColors[p]}">${p.toUpperCase()}</span>`;
+            const dueDateSpan = item.dueDate ? `<span class="archiver-item-tag">📅 ${item.dueDate}</span>` : '';
+            const isChecked = state.selectedItems.includes(item.id) ? 'checked' : '';
+
+            div.innerHTML = `
+              <div class="archiver-item-header">
+                <input type="checkbox" class="archiver-checkbox" data-id="${item.id}" ${isChecked}>
+                <span class="archiver-item-title">${escapeHtml(item.title)}</span>
+                <span class="archiver-item-date">${new Date(item.timestamp).toLocaleString()}</span>
+              </div>
+              <div class="archiver-item-desc">${escapeHtml(item.description)}</div>
+              <div class="archiver-item-tags">${tagsHTML}</div>
+              <div class="archiver-item-meta" style="display:flex;gap:6px;margin-top:4px;">
+                ${priorityBadge}
+                ${dueDateSpan}
+              </div>
+              <div class="archiver-item-actions">
+                <button class="archiver-open-btn" title="Mở trong Editor đọc/sửa chi tiết">📖 Mở File</button>
+                <button class="archiver-edit-btn" title="Chỉnh sửa thuộc tính (Form Nhanh)">✏️ Info</button>
+                <button class="archiver-del-btn" title="Xóa vĩnh viễn">🗑️ Xóa</button>
+              </div>
+            `;
+            list.appendChild(div);
+          });
+        }
+
+        function handleDeleteArchiverItem(id) {
+          if (confirm('Bạn có chắc muốn xóa vĩnh viễn ghi chú này?')) {
+            state.archiverItems = state.archiverItems.filter(i => i.id !== id);
+            if(activeTextNoteId === id) activeTextNoteId = null; // Clear if it's the opened one
+            renderArchiverList();
+            saveState();
+          }
+        }
+
+        function handleQuickEditArchiverItem(id) {
+          const item = state.archiverItems.find(i => i.id === id);
+          if (!item) return;
+          editingQuickId = id;
+          document.getElementById('archiverQuickAddArea').style.display = 'flex';
+          document.getElementById('archiverTitle').value = item.title;
+          document.getElementById('archiverDesc').value = item.description;
+          document.getElementById('archiverPriority').value = item.priority || 'low';
+          document.getElementById('archiverDueDate').value = item.dueDate || '';
+          document.getElementById('archiverTagInput').value = '';
+          document.getElementById('archiverCurrentTags').innerHTML = '';
+          state.currentTags = [...item.tags];
+          item.tags.forEach(t => {
+              const span = document.createElement('span');
+              span.className = 'archiver-tag';
+              span.textContent = t;
+              span.dataset.tag = t;
+              span.onclick = () => {
+                state.currentTags = state.currentTags.filter(ct => ct !== t);
+                span.remove();
+              };
+              document.getElementById('archiverCurrentTags').appendChild(span);
+          });
+          document.getElementById('archiverAddBtn').textContent = '🔄 Cập nhật Thuộc tính';
+          document.getElementById('archiverTitle').focus();
+        }
+
+        function setupNotebookTabs() {
+          document.querySelectorAll('.notebook-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+              const type = tab.dataset.type;
+              document.querySelectorAll('.notebook-tab').forEach(t => t.classList.remove('active'));
+              tab.classList.add('active');
+              document.querySelectorAll('.notebook-content').forEach(c => c.classList.remove('active'));
+              document.getElementById('notebook' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+            });
+          });
+        }
+
+        function setupArchiverEvents() {
+          // Text Editor Bar
+          document.getElementById('notebookTextArea').addEventListener('input', updateTextStats);
+          document.getElementById('textNewBtn').addEventListener('click', resetEditorNote);
+          document.getElementById('textSaveToArchiverBtn').addEventListener('click', saveEditorToArchiver);
+          document.getElementById('textDownloadTxtBtn').addEventListener('click', downloadTxt);
+          document.getElementById('textDownloadDocBtn').addEventListener('click', downloadDoc);
+
+          // Archiver List actions
+          document.getElementById('toggleQuickAddBtn').addEventListener('click', () => {
+             const area = document.getElementById('archiverQuickAddArea');
+             area.style.display = area.style.display === 'none' ? 'flex' : 'none';
+          });
+
+          document.getElementById('archiverTagInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              let tag = e.target.value.trim();
+              if (tag && !tag.startsWith('#')) tag = '#' + tag;
+              addTagToCurrent(tag);
+            }
+          });
+
+          document.getElementById('archiverAddBtn').addEventListener('click', handleQuickAddOrUpdate);
+
+          document.getElementById('archiverList').addEventListener('click', e => {
+            const btn = e.target;
+            const itemEl = btn.closest('.archiver-item');
+            if (!itemEl) return;
+            const id = Number(itemEl.dataset.id);
+
+            if (btn.classList.contains('archiver-del-btn')) handleDeleteArchiverItem(id);
+            if (btn.classList.contains('archiver-edit-btn')) handleQuickEditArchiverItem(id);
+            if (btn.classList.contains('archiver-open-btn')) loadNoteIntoEditor(id);
+
+            if (btn.classList.contains('archiver-checkbox')) {
+              if (btn.checked) {
+                if (!state.selectedItems.includes(id)) state.selectedItems.push(id);
+              } else {
+                state.selectedItems = state.selectedItems.filter(i => i !== id);
+              }
+              document.getElementById('archiverBulkDeleteBtn').style.display = state.selectedItems.length ? 'inline-block' : 'none';
+            }
+          });
+
+          document.getElementById('archiverExportBtn').addEventListener('click', () => {
+            const blob = new Blob([JSON.stringify(state.archiverItems, null, 2)], {type:'application/json'});
+            downloadBlob(blob, `Data_Backup_${new Date().toISOString().slice(0,10)}.json`);
+          });
+
+          document.getElementById('archiverImportBtn').addEventListener('click', () => {
+            document.getElementById('archiverFileIn').click();
+          });
+
+          document.getElementById('archiverFileIn').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+              try {
+                const parsed = JSON.parse(ev.target.result);
+                if (Array.isArray(parsed)) {
+                  // Merge data or replace? Let's append missing
+                  const existingIds = new Set(state.archiverItems.map(i => i.id));
+                  parsed.forEach(i => {
+                     if(!existingIds.has(i.id)) state.archiverItems.push(i);
+                  });
+                  renderArchiverList();
+                  saveState();
+                  alert('✅ Import/Merge thành công!');
+                } else {
+                  alert('❌ File không phải định dạng hợp lệ.');
+                }
+              } catch (err) {
+                alert('❌ Lỗi khi đọc file JSON.');
+              }
+            };
+            reader.readAsText(file);
+          });
+
+          document.getElementById('archiverBulkDeleteBtn').addEventListener('click', () => {
+            if (state.selectedItems.length === 0) return;
+            if (confirm(`Xóa vĩnh viễn ${state.selectedItems.length} ghi chú đã chọn?`)) {
+              state.archiverItems = state.archiverItems.filter(i => !state.selectedItems.includes(i.id));
+              state.selectedItems = [];
+              renderArchiverList();
+              saveState();
+              document.getElementById('archiverBulkDeleteBtn').style.display = 'none';
+            }
+          });
+
+          document.getElementById('archiverSelectAllBtn').addEventListener('click', () => {
+            if (state.selectedItems.length === state.archiverItems.length && state.archiverItems.length > 0) {
+              state.selectedItems = [];
+              document.getElementById('archiverSelectAllBtn').textContent = '✅ Chọn tất cả';
+              document.querySelectorAll('.archiver-checkbox').forEach(cb => cb.checked = false);
+            } else {
+              state.selectedItems = state.archiverItems.map(i => i.id);
+              document.getElementById('archiverSelectAllBtn').textContent = '❌ Bỏ chọn tất cả';
+              document.querySelectorAll('.archiver-checkbox').forEach(cb => cb.checked = true);
+            }
+            document.getElementById('archiverBulkDeleteBtn').style.display = state.selectedItems.length ? 'inline-block' : 'none';
+          });
+
+          document.getElementById('archiverFilter').addEventListener('input', renderArchiverList);
+          document.getElementById('archiverSort').addEventListener('change', renderArchiverList);
+        }
+
+        // ==================== CLOCK FUNCTIONS ====================
+        let clockInterval = null;
+
+        function formatMMSS(ms) {
+          const total = Math.max(0, Math.floor(ms / 1000));
+          const m = Math.floor(total / 60);
+          const s = total % 60;
+          return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+
+        function updateProgressCircle() {
+          const circle = document.querySelector('.clock-progress');
+          if (!circle) return;
+          const radius = 90;
+          const perimeter = 2 * Math.PI * radius;
+          circle.style.strokeDasharray = `${perimeter} ${perimeter}`;
+          let proportion = 0;
+          if (state.clockMode === 'countdown') {
+            const mins = parseInt(document.getElementById('customMinutes').value) || 25;
+            const totalMs = mins * 60 * 1000;
+            proportion = state.clockRemaining / totalMs;
+          }
+          const offset = perimeter * (1 - proportion);
+          circle.style.strokeDashoffset = offset;
+        }
+
+        function updateClockUI() {
+          const display = document.getElementById('clockTimeDisplay');
+          const startBtn = document.getElementById('clockStartBtn');
+          const pauseBtn = document.getElementById('clockPauseBtn');
+          const lapBtn = document.getElementById('clockLapBtn');
+          const time = state.clockMode === 'stopwatch' ? state.clockElapsed : state.clockRemaining;
+          display.textContent = formatMMSS(time);
+          startBtn.style.display = state.clockIsRunning ? 'none' : 'inline-block';
+          pauseBtn.style.display = state.clockIsRunning ? 'inline-block' : 'none';
+          lapBtn.style.display = (state.clockMode === 'stopwatch' && state.clockIsRunning) ? 'inline-block' : 'none';
+          document.getElementById('clockLaps').style.display = state.clockLaps.length ? 'block' : 'none';
+          updateProgressCircle();
+        }
+
+        function renderLapList() {
+          const container = document.getElementById('lapsList');
+          container.innerHTML = '';
+          state.clockLaps.forEach(lap => {
+            const div = document.createElement('div');
+            div.className = 'lap-item';
+            div.innerHTML = `<span>Lap ${lap.lap}</span><span>${formatMMSS(lap.time)}</span>`;
+            container.appendChild(div);
+          });
+        }
+
+        function startClock() {
+          if (state.clockIsRunning) return;
+          if (state.clockMode === 'countdown' && state.clockRemaining <= 0) {
+            const mins = parseInt(document.getElementById('customMinutes').value);
+            if (isNaN(mins) || mins <= 0) { alert('Vui lòng nhập số phút hợp lệ.'); return; }
+            state.clockRemaining = mins * 60 * 1000;
+          }
+          state.clockIsRunning = true;
+          state.clockStartTime = Date.now();
+          clockInterval = setInterval(tickClock, 250);
+          updateClockUI();
+        }
+
+        function pauseClock() {
+          if (!state.clockIsRunning) return;
+          clearInterval(clockInterval);
+          clockInterval = null;
+          state.clockIsRunning = false;
+          const delta = Date.now() - state.clockStartTime;
+          if (state.clockMode === 'stopwatch') { state.clockElapsed += delta; } 
+          else { state.clockRemaining = Math.max(0, state.clockRemaining - delta); }
+          updateClockUI();
+        }
+
+        function resetClock() {
+          clearInterval(clockInterval);
+          clockInterval = null;
+          state.clockIsRunning = false;
+          state.clockElapsed = 0;
+          state.clockLaps = [];
+          const mins = parseInt(document.getElementById('customMinutes').value) || 25;
+          state.clockRemaining = mins * 60 * 1000;
+          updateClockUI();
+          renderLapList();
+        }
+
+        function tickClock() {
+          const now = Date.now();
+          const delta = now - state.clockStartTime;
+          if (state.clockMode === 'stopwatch') {
+            state.clockElapsed = state.clockElapsed + delta;
+            state.clockStartTime = now;
+          } else {
+            state.clockRemaining = Math.max(0, state.clockRemaining - delta);
+            state.clockStartTime = now;
+            if (state.clockRemaining <= 0) {
+              pauseClock();
+              alert('⏰ Hết giờ!');
+            }
+          }
+          updateClockUI();
+        }
+
+        function addLap() {
+          if (state.clockMode !== 'stopwatch' || !state.clockIsRunning) return;
+          const lapNumber = state.clockLaps.length + 1;
+          const lapTime = state.clockElapsed;
+          state.clockLaps.unshift({ lap: lapNumber, time: lapTime });
+          renderLapList();
+        }
+
+        function switchMode(mode) {
+          if (mode !== 'stopwatch' && mode !== 'countdown') return;
+          state.clockMode = mode;
+          resetClock();
+          document.querySelectorAll('.clock-mode-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.mode === mode);
+          });
+          document.getElementById('clockCustomInput').style.display = mode === 'countdown' ? 'flex' : 'none';
+          document.getElementById('clockLapBtn').style.display = mode === 'stopwatch' ? 'inline-block' : 'none';
+        }
+
+        function setupClockEvents() {
+          document.querySelectorAll('.clock-mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+          });
+          document.getElementById('clockStartBtn').addEventListener('click', startClock);
+          document.getElementById('clockPauseBtn').addEventListener('click', pauseClock);
+          document.getElementById('clockResetBtn').addEventListener('click', resetClock);
+          document.getElementById('clockLapBtn').addEventListener('click', addLap);
+        }
+
+        function initClock() {
+          document.querySelectorAll('.clock-mode-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.mode === state.clockMode);
+          });
+          document.getElementById('clockCustomInput').style.display = state.clockMode === 'countdown' ? 'flex' : 'none';
+          document.getElementById('clockLapBtn').style.display = state.clockMode === 'stopwatch' ? 'inline-block' : 'none';
+          updateClockUI();
+          renderLapList();
+        }
+
+        // ==================== INIT ====================
+        function init() {
+          loadState();
+          renderTree();
+          renderMatrix();
+          renderTimebox();
+          renderProgress();
+          setupTreeEvents();
+          setupMatrixTimeboxEvents();
+
+          setupNotebookTabs();
+          setupArchiverEvents();
+          renderArchiverList();
+
+          setupClockEvents();
+          initClock();
+
+          document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const tabId = btn.dataset.tab;
+              document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+              document.getElementById(`panel-${tabId}`).classList.add('active');
+            });
+          });
+
+          document.getElementById('saveAllBtn').addEventListener('click', () => { saveState(); alert('✅ Đã lưu cấu hình HĐH.'); });
+          document.getElementById('resetDefaultsBtn').addEventListener('click', () => {
+            if (confirm('Reset về mặc định? Dữ liệu chưa xuất sẽ bị xóa.')) { 
+              setDefaultState(); renderTree(); renderMatrix(); renderTimebox(); renderProgress(); renderArchiverList(); saveState(); 
+            }
+          });
+
+          document.getElementById('progressArea').addEventListener('click', e => {
+            const span = e.target.closest('.progress-check');
+            if (span && span.dataset.prog) {
+              const key = span.dataset.prog;
+              state.progress[key] = !state.progress[key];
+              renderProgress(); saveState();
+            }
+          });
+
+          setInterval(() => {
+            document.getElementById('liveClock').textContent = new Date().toLocaleTimeString('en-GB');
+          }, 1000);
           document.getElementById('liveClock').textContent = new Date().toLocaleTimeString('en-GB');
-        }, 1000);
-        document.getElementById('liveClock').textContent = new Date().toLocaleTimeString('en-GB');
-      }
+        }
 
-      init();
-    })();
-  </script>
-</body>
+        init();
+      })();
+    </script>
+  </body>
 
-</html>
+  </html>

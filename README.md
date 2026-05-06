@@ -34,17 +34,17 @@ Mỗi node có thể chứa:
 
 ```json
 {
-  "name": "📐 TOÁN HỌC (Gốc)",
+  "name": "",
   "children": [
     {
-      "name": "Bất đẳng thức (Con)",
+      "name": "",
       "children": [
-        { "name": "Cauchy (Tán)", "children": [], "leaves": ["Dạng cơ bản", "Kỹ thuật chọn điểm rơi"] }
+        { "name": "", "children": [], "leaves": [ ] }
       ],
-      "leaves": ["Bunhiacopxki", "AM-GM"]
+      "leaves": []
     }
   ],
-  "leaves": ["Hình học phẳng", "Đại số nâng cao"]
+  "leaves": []
 }
 ```
 

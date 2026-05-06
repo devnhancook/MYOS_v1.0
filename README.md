@@ -1,7 +1,4 @@
 # 🧠 GM_H_NHAN OS
-
-> "Diệt chết con người cũ, tái cấu trúc tương lai." · Gốc → Con → Tán → Lá
-
 ## 📋 Tổng quan dự án
 
 **GM_H_NHAN OS** là một hệ thống quản lý tri thức và năng suất cá nhân được xây dựng dưới dạng **single-file HTML application**. Đây là công cụ all-in-one giúp tổ chức kiến thức, quản lý công việc theo ma trận Eisenhower, và time-boxing hiệu quả.

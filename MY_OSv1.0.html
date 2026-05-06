@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 GM_H_NHAN OS · Root/Child/Canopy/Leaf</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Courier New', Courier, 'SF Mono', monospace;
+    }
+
+    body {
+      background: #0b1210;
+      color: #d2efe3;
+      padding: 2rem 2rem 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .os-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid #2a6b53;
+      padding-bottom: 1.2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #b1f0da;
+      text-shadow: 0 0 12px #1a4d3b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mantra {
+      font-style: italic;
+      color: #7bb9a3;
+      border-left: 4px solid #3f8f72;
+      padding-left: 1.2rem;
+      margin-top: 6px;
+      font-size: 1rem;
+    }
+
+    .sys-badge {
+      background: #13231e;
+      padding: 0.5rem 1.5rem;
+      border-radius: 40px;
+      border: 1px solid #3b8869;
+      font-weight: bold;
+      font-size: 0.9rem;
+      display: flex;
+      gap: 16px;
+      color: #bef0df;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #255f49;
+      padding-bottom: 2px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #88bba9;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 10px 28px;
+      cursor: pointer;
+      border-radius: 30px 30px 0 0;
+      transition: all 0.15s;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+      border-bottom: none;
+    }
+
+    .tab-btn:hover {
+      color: #d4f5e8;
+      background: #152f26;
+    }
+
+    .tab-btn.active {
+      color: #e3ffee;
+      background: #12261f;
+      border-color: #2e7a5e #2e7a5e #12261f;
+      border-style: solid;
+      border-width: 1px;
+      box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .tab-panel {
+      display: none;
+      background: #0e1c17;
+      border: 1px solid #286349;
+      border-radius: 24px;
+      padding: 2rem 1.8rem;
+      box-shadow: 0 12px 0 #07100c;
+      margin-bottom: 2rem;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .panel-header h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #bff0dd;
+      letter-spacing: 1px;
+      border-left: 6px solid #53b38b;
+      padding-left: 20px;
+    }
+
+    .panel-header span {
+      margin-left: auto;
+      background: #1b3d31;
+      padding: 4px 16px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      color: #a9ddcb;
+      border: 1px solid #468066;
+    }
+
+    /* ---------- TREE STYLES (Phân cấp rõ ràng) ---------- */
+    .tree-root-container {
+      padding-left: 0;
+    }
+
+    .tree-node {
+      margin: 8px 0;
+      list-style: none;
+    }
+
+    .node-children {
+      margin-left: 32px;
+      border-left: 2px dashed #2e6b53;
+      padding-left: 12px;
+    }
+
+    .node-item {
+      margin: 12px 0;
+    }
+
+    .node-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 4px 0;
+    }
+
+    .level-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #1c3a2f;
+      color: #b3ddce;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid #3e7862;
+      min-width: 70px;
+      text-align: center;
+    }
+
+    .level-0 .level-badge {
+      background: #1a4a3a;
+      color: #d0f5e7;
+      border-color: #6ab896;
+    }
+
+    .level-1 .level-badge {
+      background: #1d4e5c;
+      color: #c4eaff;
+    }
+
+    .level-2 .level-badge {
+      background: #4e5a28;
+      color: #f3f0b2;
+    }
+
+    .level-3 .level-badge {
+      background: #4a2e5e;
+      color: #e1bfff;
+    }
+
+    .node-icon {
+      font-size: 1.3rem;
+      margin-right: 4px;
+    }
+
+    .node-name-input {
+      background: transparent;
+      border: none;
+      border-bottom: 2px dashed #3a8366;
+      color: #dcf5ea;
+      font-size: 1.15rem;
+      font-weight: bold;
+      padding: 4px 8px 4px 0;
+      min-width: 200px;
+      outline: none;
+    }
+
+    .node-name-input:focus {
+      border-bottom-color: #7ce0b5;
+    }
+
+    .leaf-list {
+      margin-left: 36px;
+      margin-top: 6px;
+    }
+
+    .leaf-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+    }
+
+    .leaf-item::before {
+      content: "▹";
+      color: #5fc09a;
+      font-size: 1.3rem;
+    }
+
+    .leaf-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #367a5e;
+      color: #e2f3e9;
+      font-size: 1rem;
+      padding: 4px 6px 4px 0;
+      width: 100%;
+      outline: none;
+    }
+
+    .leaf-input:focus {
+      border-bottom-color: #8ae0bc;
+    }
+
+    .node-actions {
+      display: flex;
+      gap: 6px;
+      margin-left: 12px;
+    }
+
+    .small-btn {
+      background: none;
+      border: 1px dashed #438b6d;
+      color: #9acfbb;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .small-btn:hover {
+      background: #1b4235;
+      border: 1px solid #6fc2a0;
+      color: #f0fff8;
+    }
+
+    .delete-icon {
+      color: #cf8686;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0 4px;
+      opacity: 0.7;
+    }
+
+    .delete-icon:hover {
+      opacity: 1;
+      color: #ffa6a6;
+    }
+
+    .global-add-btn {
+      background: none;
+      border: 1px dashed #438b6d;
+      color: #9acfbb;
+      border-radius: 30px;
+      padding: 8px 20px;
+      margin-top: 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    /* ---------- MATRIX & TIMEBOX (giữ nguyên) ---------- */
+    .matrix-quadrants {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .quadrant-card {
+      background: #10231d;
+      border-radius: 20px;
+      padding: 16px 18px;
+      border: 1px solid #2e6d55;
+    }
+
+    .quadrant-title {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-q1 {
+      background: #632e2e;
+      color: #ffb5b5;
+      padding: 4px 14px;
+      border-radius: 20px;
+    }
+
+    .badge-q2 {
+      background: #1e5a6e;
+      color: #b0e4ff;
+    }
+
+    .badge-q3 {
+      background: #5e5826;
+      color: #f9f0a0;
+    }
+
+    .badge-q4 {
+      background: #3e4a44;
+      color: #d4d4d4;
+    }
+
+    .task-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .task-table td {
+      padding: 8px 4px;
+      border-bottom: 1px solid #28634b;
+    }
+
+    .task-input-matrix {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px dotted #438667;
+      color: #e0f1e8;
+      font-size: 0.95rem;
+      padding: 6px 4px;
+      outline: none;
+    }
+
+    .task-input-matrix:focus {
+      border-bottom-color: #82dcb4;
+    }
+
+    .add-task-sm {
+      background: none;
+      border: 1px dashed #4e8e72;
+      color: #aad9c5;
+      border-radius: 30px;
+      padding: 6px 14px;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .timebox-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .timebox-table th {
+      text-align: left;
+      padding: 10px 8px 8px;
+      color: #9ed1bd;
+      border-bottom: 2px solid #276349;
+    }
+
+    .timebox-table td {
+      padding: 8px 8px;
+      border-bottom: 1px solid #1f4f3c;
+    }
+
+    .time-input-field {
+      background: transparent;
+      border: none;
+      border-bottom: 1px dotted #3e8869;
+      color: #eaf9f2;
+      width: 110px;
+      padding: 6px 4px;
+      outline: none;
+    }
+
+    .desc-input-field {
+      background: transparent;
+      border: none;
+      border-bottom: 1px dotted #3e8869;
+      color: #eaf9f2;
+      width: 100%;
+      padding: 6px 4px;
+      outline: none;
+    }
+
+    .tag-input-field {
+      background: transparent;
+      border: none;
+      border-bottom: 1px dotted #3e8869;
+      color: #c2e3d6;
+      width: 90px;
+      padding: 6px 4px;
+    }
+
+    .footer {
+      display: flex;
+      gap: 24px;
+      margin-top: 10px;
+    }
+
+    .rules-box,
+    .progress-box {
+      background: #0e1f18;
+      border: 1px solid #266349;
+      border-radius: 20px;
+      padding: 1.2rem 1.8rem;
+      flex: 1;
+    }
+
+    .progress-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .progress-check {
+      font-size: 1.8rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .btn {
+      background: #1f4d3c;
+      border: 1px solid #469a7a;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 12px;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px dashed #60a589;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="os-container">
+    <div class="header">
+      <div>
+        <h1>🧠 GM_H_NHAN // OS</h1>
+        <div class="mantra">"Diệt chết con người cũ, tái cấu trúc tương lai." · Gốc → Con → Tán → Lá</div>
+      </div>
+      <div class="sys-badge">
+        <span id="liveClock">--:--:--</span>
+        <span>🔒 2FA ON</span>
+        <span>🐉 VIBE 20'</span>
+      </div>
+    </div>
+
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-tab="tree">🌳 KNOWLEDGE TREE</button>
+      <button class="tab-btn" data-tab="matrix">♟️ EISENHOWER MATRIX</button>
+      <button class="tab-btn" data-tab="timebox">📦 TIME BOXING</button>
+    </div>
+
+    <!-- Tree Panel -->
+    <div id="panel-tree" class="tab-panel active">
+      <div class="panel-header">
+        <h2>🌳 KNOWLEDGE TREE · Phân cấp</h2>
+        <span>GỐC → CON → TÁN → LÁ</span>
+      </div>
+      <div id="treeContainer" class="tree-root-container"></div>
+      <button class="global-add-btn" id="addRootBranchBtn">➕ Thêm Nhánh Gốc (Root)</button>
+      <p style="color:#639f88; margin-top:16px;">
+        ▹ Nhánh gốc (level 0) → Nhánh con (level 1) → Nhánh tán (level 2) → Nhánh lá (level 3+) · Sửa tên trực tiếp.
+      </p>
+    </div>
+
+    <!-- Matrix Panel -->
+    <div id="panel-matrix" class="tab-panel">
+      <div class="panel-header">
+        <h2>♟️ EISENHOWER MATRIX</h2>
+        <span>EXCEL-STYLE</span>
+      </div>
+      <div id="matrixGrid" class="matrix-quadrants"></div>
+    </div>
+
+    <!-- Timebox Panel -->
+    <div id="panel-timebox" class="tab-panel">
+      <div class="panel-header">
+        <h2>📦 TIME BOXING</h2>
+        <span>EDITABLE SLOTS</span>
+      </div>
+      <table class="timebox-table">
+        <thead>
+          <tr>
+            <th>Thời gian</th>
+            <th>Mô tả / Hoạt động</th>
+            <th>Tag</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="timeboxBody"></tbody>
+      </table>
+      <button class="global-add-btn" id="addTimeboxRow" style="margin-top:20px;">➕ Thêm khung giờ</button>
+    </div>
+
+    <div class="footer">
+      <div class="rules-box">
+        <h3 style="color:#b7ecdb;">⚖️ SYSTEM LAWS</h3>
+        <ul style="list-style:none; color:#c8e3d9;">
+          <li>🐕 Dogfooding · Sống trong file này</li>
+          <li>🧱 First Principles · Không giải pháp hời hợt</li>
+          <li>🔒 Zero Trust · 2FA tuyệt đối</li>
+          <li>⚡ Consistency > Intensity</li>
+        </ul>
+      </div>
+      <div class="progress-box">
+        <h3 style="color:#b7ecdb;">📊 TIẾN ĐỘ LỘT XÁC</h3>
+        <div id="progressArea"></div>
+        <div style="margin-top:20px;">
+          <button class="btn" id="saveAllBtn">💾 Lưu toàn bộ</button>
+          <button class="btn btn-outline" id="resetDefaultsBtn">⟲ Reset mặc định</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      // Cấu trúc cây với phân cấp rõ ràng
+      const DEFAULT_TREE = [
+        {
+          name: "📐 TOÁN HỌC (Gốc)",
+          children: [
+            {
+              name: "Bất đẳng thức (Con)",
+              children: [
+                { name: "Cauchy (Tán)", children: [], leaves: ["Dạng cơ bản", "Kỹ thuật chọn điểm rơi"] }
+              ],
+              leaves: ["Bunhiacopxki", "AM-GM"]
+            }
+          ],
+          leaves: ["Hình học phẳng", "Đại số nâng cao"]
+        },
+        {
+          name: "🇬🇧 ANH VĂN (Gốc)",
+          children: [],
+          leaves: ["Chuyên sâu Ngữ pháp", "Từ vựng Học thuật", "Luyện đề Chuyên Phan"]
+        },
+        {
+          name: "💻 COMPUTER SCIENCE (Gốc)",
+          children: [
+            { name: "Frontend (Con)", children: [], leaves: ["Vibe Coding", "UI/UX"] }
+          ],
+          leaves: ["System Architecture"]
+        }
+      ];
+
+      const DEFAULT_MATRIX = {
+        q1: ["[DEADLINE] Chuyên Phan mock test", "[FIX] Sửa bug BĐT", "[DEBT] 10 câu đọc hiểu"],
+        q2: ["Vibe Code 20p", "Vẽ cây Kiến thức", "Rèn First Principles"],
+        q3: ["Trả lời email không quan trọng"],
+        q4: ["Lướt mạng xã hội (hạn chế)"]
+      };
+
+      const DEFAULT_TIMEBOX = [
+        { time: "03:00 - 05:00", desc: "Deep Work (Toán/Anh)", tag: "Q1/Q2" },
+        { time: "05:00 - 05:30", desc: "System Review", tag: "Q2" },
+        { time: "21:00 - 21:20", desc: "Vibe Code Reward", tag: "Q2" },
+        { time: "22:00", desc: "System Shutdown", tag: "SLEEP" }
+      ];
+
+      const DEFAULT_PROGRESS = { targetPhan: false, treeHtml: false, timeboxIntegrated: false };
+
+      let state = {
+        tree: JSON.parse(JSON.stringify(DEFAULT_TREE)),
+        matrix: { ...DEFAULT_MATRIX },
+        timebox: [...DEFAULT_TIMEBOX],
+        progress: { ...DEFAULT_PROGRESS }
+      };
+
+      function loadState() {
+        const saved = localStorage.getItem('phuongNguyenOS_levels_v1');
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            state.tree = parsed.tree || DEFAULT_TREE;
+            state.matrix = parsed.matrix || DEFAULT_MATRIX;
+            state.timebox = parsed.timebox || DEFAULT_TIMEBOX;
+            state.progress = parsed.progress || DEFAULT_PROGRESS;
+          } catch (e) { setDefaultState(); }
+        } else { setDefaultState(); }
+      }
+      function setDefaultState() {
+        state.tree = JSON.parse(JSON.stringify(DEFAULT_TREE));
+        state.matrix = JSON.parse(JSON.stringify(DEFAULT_MATRIX));
+        state.timebox = JSON.parse(JSON.stringify(DEFAULT_TIMEBOX));
+        state.progress = JSON.parse(JSON.stringify(DEFAULT_PROGRESS));
+      }
+      function saveState() {
+        localStorage.setItem('phuongNguyenOS_levels_v1', JSON.stringify(state));
+      }
+
+      function escapeHtml(text) { return String(text).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]); }
+
+      // Xác định level dựa vào độ sâu path
+      function getLevel(path) { return path.length; }
+
+      function getLevelLabel(level) {
+        const labels = ['GỐC', 'CON', 'TÁN', 'LÁ', 'LÁ+'];
+        return labels[level] || `CẤP ${level}`;
+      }
+
+      function renderTree() {
+        const container = document.getElementById('treeContainer');
+        container.innerHTML = '';
+        state.tree.forEach((node, idx) => {
+          container.appendChild(createNodeElement(node, [], idx));
+        });
+      }
+
+      function createNodeElement(node, path, index) {
+        const nodePath = [...path, index];
+        const level = getLevel(nodePath);
+        const li = document.createElement('li');
+        li.className = 'node-item';
+        li.dataset.path = JSON.stringify(nodePath);
+        li.classList.add(`level-${Math.min(level, 3)}`);
+
+        // Header
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'node-header';
+        headerDiv.innerHTML = `
+        <span class="level-badge">${getLevelLabel(level)}</span>
+        <span class="node-icon">${level === 0 ? '🌳' : '📁'}</span>
+        <input type="text" class="node-name-input" value="${escapeHtml(node.name)}" data-path='${JSON.stringify(nodePath)}' placeholder="Tên nhánh">
+        <div class="node-actions">
+          <button class="small-btn" data-action="addChild" data-path='${JSON.stringify(nodePath)}'>+ Nhánh con</button>
+          <button class="small-btn" data-action="addLeaf" data-path='${JSON.stringify(nodePath)}'>+ Lá</button>
+          <button class="delete-icon" data-action="deleteNode" data-path='${JSON.stringify(nodePath)}'>🗑️</button>
+        </div>
+      `;
+        li.appendChild(headerDiv);
+
+        // Leaves
+        if (node.leaves && node.leaves.length) {
+          const leavesDiv = document.createElement('div');
+          leavesDiv.className = 'leaf-list';
+          node.leaves.forEach((leaf, leafIdx) => {
+            const leafPath = [...nodePath, 'leaves', leafIdx];
+            const leafItem = document.createElement('div');
+            leafItem.className = 'leaf-item';
+            leafItem.innerHTML = `
+            <input type="text" class="leaf-input" value="${escapeHtml(leaf)}" data-leaf-path='${JSON.stringify(leafPath)}'>
+            <button class="delete-icon" data-action="deleteLeaf" data-leaf-path='${JSON.stringify(leafPath)}'>✕</button>
+          `;
+            leavesDiv.appendChild(leafItem);
+          });
+          li.appendChild(leavesDiv);
+        }
+
+        // Children (nhánh con/tán)
+        if (node.children && node.children.length) {
+          const ul = document.createElement('ul');
+          ul.className = 'node-children';
+          node.children.forEach((child, childIdx) => {
+            ul.appendChild(createNodeElement(child, nodePath, childIdx));
+          });
+          li.appendChild(ul);
+        }
+
+        return li;
+      }
+
+      function getNodeByPath(pathArray) {
+        let current = state.tree;
+        for (let i = 0; i < pathArray.length; i++) {
+          const idx = pathArray[i];
+          if (!current[idx]) return null;
+          if (i === pathArray.length - 1) return current[idx];
+          if (!current[idx].children) current[idx].children = [];
+          current = current[idx].children;
+        }
+        return null;
+      }
+
+      function getParentAndIndex(pathArray) {
+        if (pathArray.length === 0) return { parent: state, index: null, container: state.tree };
+        const parentPath = pathArray.slice(0, -1);
+        const index = pathArray[pathArray.length - 1];
+        let parentContainer = state.tree;
+        for (let i = 0; i < parentPath.length; i++) {
+          parentContainer = parentContainer[parentPath[i]].children;
+        }
+        return { parent: parentContainer, index, container: parentContainer };
+      }
+
+      function setupTreeEvents() {
+        const container = document.getElementById('treeContainer');
+
+        container.addEventListener('input', e => {
+          const t = e.target;
+          if (t.classList.contains('node-name-input')) {
+            const path = JSON.parse(t.dataset.path);
+            const node = getNodeByPath(path);
+            if (node) { node.name = t.value; saveState(); }
+          } else if (t.classList.contains('leaf-input')) {
+            const leafPath = JSON.parse(t.dataset.leafPath);
+            const nodePath = leafPath.slice(0, -2);
+            const leafIdx = leafPath[leafPath.length - 1];
+            const node = getNodeByPath(nodePath);
+            if (node && node.leaves) { node.leaves[leafIdx] = t.value; saveState(); }
+          }
+        });
+
+        container.addEventListener('click', e => {
+          const btn = e.target.closest('button');
+          if (!btn) return;
+          const action = btn.dataset.action;
+          if (!action) return;
+
+          if (action === 'addChild') {
+            const path = JSON.parse(btn.dataset.path);
+            const node = getNodeByPath(path);
+            if (node) {
+              if (!node.children) node.children = [];
+              const level = getLevel(path) + 1;
+              const defaultName = level === 1 ? 'Nhánh con' : (level === 2 ? 'Nhánh tán' : 'Nhánh lá');
+              node.children.push({ name: defaultName, children: [], leaves: [] });
+              renderTree(); saveState();
+            }
+          } else if (action === 'addLeaf') {
+            const path = JSON.parse(btn.dataset.path);
+            const node = getNodeByPath(path);
+            if (node) {
+              if (!node.leaves) node.leaves = [];
+              node.leaves.push('Lá mới');
+              renderTree(); saveState();
+            }
+          } else if (action === 'deleteNode') {
+            const path = JSON.parse(btn.dataset.path);
+            if (path.length === 0) return;
+            const { container, index } = getParentAndIndex(path);
+            if (container && index !== null) {
+              container.splice(index, 1);
+              renderTree(); saveState();
+            }
+          } else if (action === 'deleteLeaf') {
+            const leafPath = JSON.parse(btn.dataset.leafPath);
+            const nodePath = leafPath.slice(0, -2);
+            const leafIdx = leafPath[leafPath.length - 1];
+            const node = getNodeByPath(nodePath);
+            if (node && node.leaves) {
+              node.leaves.splice(leafIdx, 1);
+              renderTree(); saveState();
+            }
+          }
+        });
+      }
+
+      document.getElementById('addRootBranchBtn').addEventListener('click', () => {
+        state.tree.push({ name: 'Nhánh Gốc mới', children: [], leaves: [] });
+        renderTree(); saveState();
+      });
+
+      // Matrix & Timebox (giữ nguyên)
+      function renderMatrix() {
+        const grid = document.getElementById('matrixGrid');
+        const quads = [
+          { key: 'q1', title: '🔴 Q1 · Quan trọng & Khẩn', badge: 'badge-q1' },
+          { key: 'q2', title: '🔵 Q2 · Quan trọng & Không khẩn', badge: 'badge-q2' },
+          { key: 'q3', title: '🟡 Q3 · Không q.trọng & Khẩn', badge: 'badge-q3' },
+          { key: 'q4', title: '⚪ Q4 · Không q.trọng & Không khẩn', badge: 'badge-q4' }
+        ];
+        let html = '';
+        quads.forEach(q => {
+          const tasks = state.matrix[q.key] || [];
+          html += `<div class="quadrant-card">`;
+          html += `<div class="quadrant-title"><span class="${q.badge}">${q.key.toUpperCase()}</span> ${q.title}</div>`;
+          html += `<table class="task-table"><tbody>`;
+          tasks.forEach((task, idx) => {
+            html += `<tr><td><input class="task-input-matrix" value="${escapeHtml(task)}" data-quadrant="${q.key}" data-task-index="${idx}"></td>`;
+            html += `<td><button class="delete-icon" data-delete-task data-quadrant="${q.key}" data-task-index="${idx}">✕</button></td></tr>`;
+          });
+          html += `</tbody></table>`;
+          html += `<button class="add-task-sm" data-add-task="${q.key}">+ Thêm task</button>`;
+          html += `</div>`;
+        });
+        grid.innerHTML = html;
+      }
+
+      function renderTimebox() {
+        const tbody = document.getElementById('timeboxBody');
+        let html = '';
+        state.timebox.forEach((slot, idx) => {
+          html += `<tr>`;
+          html += `<td><input class="time-input-field" value="${escapeHtml(slot.time)}" data-timebox-index="${idx}" data-field="time"></td>`;
+          html += `<td><input class="desc-input-field" value="${escapeHtml(slot.desc)}" data-timebox-index="${idx}" data-field="desc"></td>`;
+          html += `<td><input class="tag-input-field" value="${escapeHtml(slot.tag)}" data-timebox-index="${idx}" data-field="tag"></td>`;
+          html += `<td><button class="delete-icon" data-delete-timebox="${idx}">🗑️</button></td>`;
+          html += `</tr>`;
+        });
+        tbody.innerHTML = html;
+      }
+
+      function renderProgress() {
+        const area = document.getElementById('progressArea');
+        const p = state.progress;
+        area.innerHTML = `
+        <div class="progress-item"><span class="progress-check" data-prog="targetPhan">${p.targetPhan ? '✅' : '⬜'}</span> Hoàn thành mục tiêu Chuyên Phan</div>
+        <div class="progress-item"><span class="progress-check" data-prog="treeHtml">${p.treeHtml ? '✅' : '⬜'}</span> Hoàn thiện Knowledge Tree HTML</div>
+        <div class="progress-item"><span class="progress-check" data-prog="timeboxIntegrated">${p.timeboxIntegrated ? '✅' : '⬜'}</span> Tích hợp Time Boxing</div>
+      `;
+      }
+
+      function setupMatrixTimeboxEvents() {
+        document.getElementById('matrixGrid').addEventListener('input', e => {
+          const t = e.target;
+          if (t.classList.contains('task-input-matrix')) {
+            const q = t.dataset.quadrant, idx = t.dataset.taskIndex;
+            if (q && idx !== undefined) state.matrix[q][idx] = t.value;
+            saveState();
+          }
+        });
+        document.getElementById('matrixGrid').addEventListener('click', e => {
+          const t = e.target;
+          if (t.dataset.addTask) {
+            const q = t.dataset.addTask;
+            state.matrix[q].push('Nhiệm vụ mới');
+            renderMatrix(); saveState();
+          } else if (t.dataset.deleteTask !== undefined) {
+            const q = t.dataset.quadrant, idx = t.dataset.taskIndex;
+            state.matrix[q].splice(idx, 1);
+            renderMatrix(); saveState();
+          }
+        });
+
+        document.getElementById('timeboxBody').addEventListener('input', e => {
+          const t = e.target, idx = t.dataset.timeboxIndex, field = t.dataset.field;
+          if (idx !== undefined && field) state.timebox[idx][field] = t.value;
+          saveState();
+        });
+        document.getElementById('timeboxBody').addEventListener('click', e => {
+          if (e.target.dataset.deleteTimebox !== undefined) {
+            state.timebox.splice(e.target.dataset.deleteTimebox, 1);
+            renderTimebox(); saveState();
+          }
+        });
+        document.getElementById('addTimeboxRow').addEventListener('click', () => {
+          state.timebox.push({ time: '00:00', desc: 'Mô tả', tag: 'tag' });
+          renderTimebox(); saveState();
+        });
+      }
+
+      function init() {
+        loadState();
+        renderTree();
+        renderMatrix();
+        renderTimebox();
+        renderProgress();
+        setupTreeEvents();
+        setupMatrixTimeboxEvents();
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const tabId = btn.dataset.tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(`panel-${tabId}`).classList.add('active');
+          });
+        });
+
+        document.getElementById('saveAllBtn').addEventListener('click', () => { saveState(); alert('✅ Đã lưu.'); });
+        document.getElementById('resetDefaultsBtn').addEventListener('click', () => {
+          if (confirm('Reset về mặc định?')) { setDefaultState(); renderTree(); renderMatrix(); renderTimebox(); renderProgress(); saveState(); }
+        });
+
+        document.getElementById('progressArea').addEventListener('click', e => {
+          const span = e.target.closest('.progress-check');
+          if (span && span.dataset.prog) {
+            const key = span.dataset.prog;
+            state.progress[key] = !state.progress[key];
+            renderProgress(); saveState();
+          }
+        });
+
+        setInterval(() => {
+          document.getElementById('liveClock').textContent = new Date().toLocaleTimeString('en-GB');
+        }, 1000);
+        document.getElementById('liveClock').textContent = new Date().toLocaleTimeString('en-GB');
+      }
+
+      init();
+    })();
+  </script>
+</body>
+
+</html>

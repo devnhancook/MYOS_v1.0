@@ -230,7 +230,7 @@ MYOS/
 
 ## 👤 Tác giả
 
-**GM_H_NHAN** - "Diệt chết con người cũ, tái cấu trúc tương lai."
+**GM_H_NHAN**"
 
 ---
 

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 GM_H_NHAN OS · Root/Child/Canopy/Leaf</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Courier New', Courier, 'SF Mono', monospace;
+    }
+
+    body {
+      background: #0b1210;
+      color: #d2efe3;
+      padding: 2rem 2rem 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .os-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid #2a6b53;
+      padding-bottom: 1.2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #b1f0da;
+      text-shadow: 0 0 12px #1a4d3b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sys-badge {
+      background: #13231e;
+      padding: 0.5rem 1.5rem;
+      border-radius: 40px;
+      border: 1px solid #3b8869;
+      font-weight: bold;
+      font-size: 0.9rem;
+      display: flex;
+      gap: 16px;
+      color: #bef0df;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #255f49;
+      padding-bottom: 2px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #88bba9;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 10px 28px;
+      cursor: pointer;
+      border-radius: 30px 30px 0 0;
+      transition: all 0.15s;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+      border-bottom: none;
+    }
+
+    .tab-btn:hover {
+      color: #d4f5e8;
+      background: #152f26;
+    }
+
+    .tab-btn.active {
+      color: #e3ffee;
+      background: #12261f;
+      border-color: #2e7a5e #2e7a5e #12261f;
+      border-style: solid;
+      border-width: 1px;
+      box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .tab-panel {
+      display: none;
+      background: #0e1c17;
+      border: 1px solid #286349;
+      border-radius: 24px;
+      padding: 2rem 1.8rem;
+      box-shadow: 0 12px 0 #07100c;
+      margin-bottom: 2rem;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .panel-header h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #bff0dd;
+      letter-spacing: 1px;
+      border-left: 6px solid #53b38b;
+      padding-left: 20px;
+    }
+
+    .panel-header span {
+      margin-left: auto;
+      background: #1b3d31;
+      padding: 4px 16px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      color: #a9ddcb;
+      border: 1px solid #468066;
+    }
+
+    .tree-root-container {
+      padding-left: 0;
+    }
+
+    .tree-node {
+      margin: 8px 0;
+      list-style: none;
+    }
+
+    .node-children {
+      margin-left: 32px;
+      border-left: 2px dashed #2e6b53;
+      padding-left: 12px;
+    }
+
+    .node-item {
+      margin: 12px 0;
+    }
+
+    .node-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 4px 0;
+    }
+
+    .level-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #1c3a2f;
+      color: #b3ddce;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid #3e7862;
+      min-width: 70px;
+      text-align: center;
+    }
+
+    .level-0 .level-badge { background: #1a4a3a; color: #d0f5e7; border-color: #6ab896; }
+    .level-1 .level-badge { background: #1d4e5c; color: #c4eaff; }
+    .level-2 .level-badge { background: #4e5a28; color: #f3f0b2; }
+    .level-3 .level-badge { background: #4a2e5e; color: #e1bfff; }
+
+    .node-icon { font-size: 1.3rem; margin-right: 4px; }
+
+    .node-name-input {
+      background: transparent;
+      border: none;
+      border-bottom: 2px dashed #3a8366;
+      color: #dcf5ea;
+      font-size: 1.15rem;
+      font-weight: bold;
+      padding: 4px 8px 4px 0;
+      min-width: 200px;
+      outline: none;
+    }
+
+    .leaf-list { margin-left: 36px; margin-top: 6px; }
+
+    .leaf-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+    }
+
+    .leaf-item::before {
+      content: "▹";
+      color: #5fc09a;
+      font-size: 1.3rem;
+    }
+
+    .leaf-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #367a5e;
+      color: #e2f3e9;
+      font-size: 1rem;
+      padding: 4px 6px 4px 0;
+      width: 100%;
+      outline: none;
+    }
+
+    .node-actions { display: flex; gap: 6px; margin-left: 12px; }
+
+    .small-btn {
+      background: none;
+      border: 1px dashed #438b6d;
+      color: #9acfbb;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .delete-icon {
+      color: #cf8686;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      opacity: 0.7;
+    }
+
+    .global-add-btn {
+      background: none;
+      border: 1px dashed #438b6d;
+      color: #9acfbb;
+      border-radius: 30px;
+      padding: 8px 20px;
+      margin-top: 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .matrix-quadrants {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .quadrant-card {
+      background: #10231d;
+      border-radius: 20px;
+      padding: 16px 18px;
+      border: 1px solid #2e6d55;
+    }
+
+    .quadrant-title {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-q1 { background: #632e2e; color: #ffb5b5; padding: 4px 14px; border-radius: 20px; }
+    .badge-q2 { background: #1e5a6e; color: #b0e4ff; padding: 4px 14px; border-radius: 20px; }
+    .badge-q3 { background: #5e5826; color: #f9f0a0; padding: 4px 14px; border-radius: 20px; }
+    .badge-q4 { background: #3e4a44; color: #d4d4d4; padding: 4px 14px; border-radius: 20px; }
+
+    .task-table { width: 100%; border-collapse: collapse; }
+    .task-table td { padding: 8px 4px; border-bottom: 1px solid #28634b; }
+
+    .task-input-matrix {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px dotted #438667;
+      color: #e0f1e8;
+      font-size: 0.95rem;
+      padding: 6px 4px;
+      outline: none;
+    }
+
+    .add-task-sm {
+      background: none;
+      border: 1px dashed #4e8e72;
+      color: #aad9c5;
+      border-radius: 30px;
+      padding: 6px 14px;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .timebox-table { width: 100%; border-collapse: collapse; }
+    .timebox-table th { text-align: left; padding: 10px 8px 8px; color: #9ed1bd; border-bottom: 2px solid #276349; }
+    .timebox-table td { padding: 8px 8px; border-bottom: 1px solid #1f4f3c; }
+
+    .time-input-field, .desc-input-field, .tag-input-field {
+      background: transparent;
+      border: none;
+      border-bottom: 1px dotted #3e8869;
+      color: #eaf9f2;
+      padding: 6px 4px;
+      outline: none;
+    }
+    .time-input-field { width: 110px; }
+    .desc-input-field { width: 100%; }
+    .tag-input-field { width: 90px; color: #c2e3d6; }
+
+    .footer { display: flex; gap: 24px; margin-top: 10px; }
+    .rules-box, .progress-box {
+      background: #0e1f18;
+      border: 1px solid #266349;
+      border-radius: 20px;
+      padding: 1.2rem 1.8rem;
+      flex: 1;
+    }
+
+    .progress-item { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+    .progress-check { font-size: 1.8rem; cursor: pointer; user-select: none; }
+
+    .btn {
+      background: #1f4d3c;
+      border: 1px solid #469a7a;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 12px;
+    }
+
+    .btn-outline { background: transparent; border: 1px dashed #60a589; }
+  </style>
+</head>
+
+<body>
+  <div class="os-container">
+    <div class="header">
+      <div>
+        <h1>🧠 GM_H_NHAN // OS</h1>
+      </div>
+      <div class="sys-badge">
+        <span id="liveClock">--:--:--</span>
+        <span>🔒 SECURE MODE</span>
+        <span>⚡ SYSTEM ACTIVE</span>
+      </div>
+    </div>
+
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-tab="tree">🌳 KNOWLEDGE TREE</button>
+      <button class="tab-btn" data-tab="matrix">♟️ EISENHOWER MATRIX</button>
+      <button class="tab-btn" data-tab="timebox">📦 TIME BOXING</button>
+    </div>
+
+    <!-- Tree Panel -->
+    <div id="panel-tree" class="tab-panel active">
+      <div class="panel-header">
+        <h2>🌳 KNOWLEDGE TREE · Cấu trúc</h2>
+        <span>GỐC → CON → TÁN → LÁ</span>
+      </div>
+      <div id="treeContainer" class="tree-root-container"></div>
+      <button class="global-add-btn" id="addRootBranchBtn">➕ Thêm Nhánh Gốc (Root)</button>
+    </div>
+
+    <!-- Matrix Panel -->
+    <div id="panel-matrix" class="tab-panel">
+      <div class="panel-header">
+        <h2>♟️ EISENHOWER MATRIX</h2>
+        <span>PHÂN LOẠI CÔNG VIỆC</span>
+      </div>
+      <div id="matrixGrid" class="matrix-quadrants"></div>
+    </div>
+
+    <!-- Timebox Panel -->
+    <div id="panel-timebox" class="tab-panel">
+      <div class="panel-header">
+        <h2>📦 TIME BOXING</h2>
+        <span>LỊCH TRÌNH LINH HOẠT</span>
+      </div>
+      <table class="timebox-table">
+        <thead>
+          <tr>
+            <th>Thời gian</th>
+            <th>Mô tả / Hoạt động</th>
+            <th>Tag</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="timeboxBody"></tbody>
+      </table>
+      <button class="global-add-btn" id="addTimeboxRow">➕ Thêm khung giờ</button>
+    </div>
+
+    <div class="footer">
+      <div class="rules-box">
+        <h3 style="color:#b7ecdb;">⚖️ SYSTEM LAWS</h3>
+        <ul style="list-style:none; color:#c8e3d9;">
+          <li>🧱 First Principles</li>
+          <li>⚡ Consistency > Intensity</li>
+          <li>🔍 Deep Focus</li>
+          <li>🧘 Balanced Growth</li>
+        </ul>
+      </div>
+      <div class="progress-box">
+        <h3 style="color:#b7ecdb;">📊 TIẾN ĐỘ HỆ THỐNG</h3>
+        <div id="progressArea"></div>
+        <div style="margin-top:20px;">
+          <button class="btn" id="saveAllBtn">💾 Lưu dữ liệu</button>
+          <button class="btn btn-outline" id="resetDefaultsBtn">⟲ Reset mặc định</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const DEFAULT_TREE = [
+        {
+          name: "📚 LĨNH VỰC 01",
+          children: [
+            {
+              name: "Chủ đề con A",
+              children: [
+                { name: "Chi tiết 1", children: [], leaves: ["Nội dung mẫu", "Ghi chú mẫu"] }
+              ],
+              leaves: ["Kiến thức cơ bản"]
+            }
+          ],
+          leaves: ["Tổng quan lĩnh vực"]
+        }
+      ];
+
+      const DEFAULT_MATRIX = {
+        q1: ["Công việc khẩn cấp"],
+        q2: ["Phát triển bản thân", "Lập kế hoạch"],
+        q3: ["Phản hồi thông báo"],
+        q4: ["Giải trí thụ động"]
+      };
+
+      const DEFAULT_TIMEBOX = [
+        { time: "08:00 - 10:00", desc: "Tập trung sâu", tag: "WORK" },
+        { time: "12:00 - 13:00", desc: "Nghỉ trưa", tag: "REST" }
+      ];
+
+      const DEFAULT_PROGRESS = { target01: false, target02: false, target03: false };
+
+      let state = {
+        tree: JSON.parse(JSON.stringify(DEFAULT_TREE)),
+        matrix: { ...DEFAULT_MATRIX },
+        timebox: [...DEFAULT_TIMEBOX],
+        progress: { ...DEFAULT_PROGRESS }
+      };
+
+      function loadState() {
+        const saved = localStorage.getItem('gm_h_nhan_os_data');
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            state.tree = parsed.tree || DEFAULT_TREE;
+            state.matrix = parsed.matrix || DEFAULT_MATRIX;
+            state.timebox = parsed.timebox || DEFAULT_TIMEBOX;
+            state.progress = parsed.progress || DEFAULT_PROGRESS;
+          } catch (e) { setDefaultState(); }
+        } else { setDefaultState(); }
+      }
+
+      function setDefaultState() {
+        state.tree = JSON.parse(JSON.stringify(DEFAULT_TREE));
+        state.matrix = JSON.parse(JSON.stringify(DEFAULT_MATRIX));
+        state.timebox = JSON.parse(JSON.stringify(DEFAULT_TIMEBOX));
+        state.progress = JSON.parse(JSON.stringify(DEFAULT_PROGRESS));
+      }
+
+      function saveState() {
+        localStorage.setItem('gm_h_nhan_os_data', JSON.stringify(state));
+      }
+
+      function escapeHtml(text) { return String(text).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]); }
+
+      function renderTree() {
+        const container = document.getElementById('treeContainer');
+        container.innerHTML = '';
+        state.tree.forEach((node, idx) => {
+          container.appendChild(createNodeElement(node, [], idx));
+        });
+      }
+
+      function createNodeElement(node, path, index) {
+        const nodePath = [...path, index];
+        const level = nodePath.length - 1;
+        const li = document.createElement('li');
+        li.className = 'node-item';
+        li.classList.add(`level-${Math.min(level, 3)}`);
+
+        const labels = ['GỐC', 'CON', 'TÁN', 'LÁ'];
+        const label = labels[level] || `CẤP ${level}`;
+
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'node-header';
+        headerDiv.innerHTML = `
+          <span class="level-badge">${label}</span>
+          <span class="node-icon">${level === 0 ? '🌳' : '📁'}</span>
+          <input type="text" class="node-name-input" value="${escapeHtml(node.name)}" data-path='${JSON.stringify(nodePath)}'>
+          <div class="node-actions">
+            <button class="small-btn" data-action="addChild" data-path='${JSON.stringify(nodePath)}'>+ Con</button>
+            <button class="small-btn" data-action="addLeaf" data-path='${JSON.stringify(nodePath)}'>+ Lá</button>
+            <button class="delete-icon" data-action="deleteNode" data-path='${JSON.stringify(nodePath)}'>🗑️</button>
+          </div>
+        `;
+        li.appendChild(headerDiv);
+
+        if (node.leaves && node.leaves.length) {
+          const leavesDiv = document.createElement('div');
+          leavesDiv.className = 'leaf-list';
+          node.leaves.forEach((leaf, leafIdx) => {
+            const leafPath = [...nodePath, 'leaves', leafIdx];
+            const leafItem = document.createElement('div');
+            leafItem.className = 'leaf-item';
+            leafItem.innerHTML = `
+              <input type="text" class="leaf-input" value="${escapeHtml(leaf)}" data-leaf-path='${JSON.stringify(leafPath)}'>
+              <button class="delete-icon" data-action="deleteLeaf" data-leaf-path='${JSON.stringify(leafPath)}'>✕</button>
+            `;
+            leavesDiv.appendChild(leafItem);
+          });
+          li.appendChild(leavesDiv);
+        }
+
+        if (node.children && node.children.length) {
+          const ul = document.createElement('ul');
+          ul.className = 'node-children';
+          node.children.forEach((child, childIdx) => {
+            ul.appendChild(createNodeElement(child, nodePath, childIdx));
+          });
+          li.appendChild(ul);
+        }
+
+        return li;
+      }
+
+      function getNodeByPath(pathArray) {
+        let current = state.tree;
+        for (let i = 0; i < pathArray.length; i++) {
+          const idx = pathArray[i];
+          if (i === pathArray.length - 1) return current[idx];
+          current = current[idx].children;
+        }
+        return null;
+      }
+
+      function renderMatrix() {
+        const grid = document.getElementById('matrixGrid');
+        const quads = [
+          { key: 'q1', title: 'Q1 · Quan trọng & Khẩn', badge: 'badge-q1' },
+          { key: 'q2', title: 'Q2 · Quan trọng & Không khẩn', badge: 'badge-q2' },
+          { key: 'q3', title: 'Q3 · Không q.trọng & Khẩn', badge: 'badge-q3' },
+          { key: 'q4', title: 'Q4 · Không q.trọng & Không khẩn', badge: 'badge-q4' }
+        ];
+        let html = '';
+        quads.forEach(q => {
+          const tasks = state.matrix[q.key] || [];
+          html += `<div class="quadrant-card">
+            <div class="quadrant-title"><span class="${q.badge}">${q.key.toUpperCase()}</span></div>
+            <table class="task-table"><tbody>`;
+          tasks.forEach((task, idx) => {
+            html += `<tr><td><input class="task-input-matrix" value="${escapeHtml(task)}" data-quadrant="${q.key}" data-task-index="${idx}"></td>
+              <td><button class="delete-icon" data-delete-task data-quadrant="${q.key}" data-task-index="${idx}">✕</button></td></tr>`;
+          });
+          html += `</tbody></table>
+            <button class="add-task-sm" data-add-task="${q.key}">+ Thêm nhiệm vụ</button>
+          </div>`;
+        });
+        grid.innerHTML = html;
+      }
+
+      function renderTimebox() {
+        const tbody = document.getElementById('timeboxBody');
+        let html = '';
+        state.timebox.forEach((slot, idx) => {
+          html += `<tr>
+            <td><input class="time-input-field" value="${escapeHtml(slot.time)}" data-timebox-index="${idx}" data-field="time"></td>
+            <td><input class="desc-input-field" value="${escapeHtml(slot.desc)}" data-timebox-index="${idx}" data-field="desc"></td>
+            <td><input class="tag-input-field" value="${escapeHtml(slot.tag)}" data-timebox-index="${idx}" data-field="tag"></td>
+            <td><button class="delete-icon" data-delete-timebox="${idx}">🗑️</button></td>
+          </tr>`;
+        });
+        tbody.innerHTML = html;
+      }
+
+      function renderProgress() {
+        const area = document.getElementById('progressArea');
+        const p = state.progress;
+        area.innerHTML = `
+          <div class="progress-item"><span class="progress-check" data-prog="target01">${p.target01 ? '✅' : '⬜'}</span> Mục tiêu chiến lược 01</div>
+          <div class="progress-item"><span class="progress-check" data-prog="target02">${p.target02 ? '✅' : '⬜'}</span> Hoàn thiện hệ thống quản lý</div>
+          <div class="progress-item"><span class="progress-check" data-prog="target03">${p.target03 ? '✅' : '⬜'}</span> Tối ưu hóa hiệu suất</div>
+        `;
+      }
+
+      function init() {
+        loadState();
+        renderTree();
+        renderMatrix();
+        renderTimebox();
+        renderProgress();
+
+        // Events
+        document.getElementById('treeContainer').addEventListener('input', e => {
+          const t = e.target;
+          if (t.classList.contains('node-name-input')) {
+            const node = getNodeByPath(JSON.parse(t.dataset.path));
+            if (node) { node.name = t.value; saveState(); }
+          }
+        });
+
+        document.getElementById('matrixGrid').addEventListener('click', e => {
+          const q = e.target.dataset.addTask;
+          if (q) { state.matrix[q].push('Nhiệm vụ mới'); renderMatrix(); saveState(); }
+        });
+
+        document.getElementById('addTimeboxRow').addEventListener('click', () => {
+          state.timebox.push({ time: '00:00', desc: 'Hoạt động', tag: 'TAG' });
+          renderTimebox(); saveState();
+        });
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn, .tab-panel').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(`panel-${btn.dataset.tab}`).classList.add('active');
+          });
+        });
+
+        document.getElementById('saveAllBtn').addEventListener('click', () => { saveState(); alert('✅ Đã lưu vào trình duyệt.'); });
+        
+        document.getElementById('progressArea').addEventListener('click', e => {
+          const span = e.target.closest('.progress-check');
+          if (span) {
+            const key = span.dataset.prog;
+            state.progress[key] = !state.progress[key];
+            renderProgress(); saveState();
+          }
+        });
+
+        setInterval(() => {
+          document.getElementById('liveClock').textContent = new Date().toLocaleTimeString('en-GB');
+        }, 1000);
+      }
+
+      init();
+    })();
+  </script>
+</body>
+
+</html>
